@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chisap Fiesta · Abrí tu franquicia — Descubrí tu perfil en 2 minutos</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="assets/brand.css">
+<style>
+/* ── landing propia ── */
+.hero{position:relative;overflow:hidden;padding:70px 0 66px;
+  background:radial-gradient(1000px 560px at 78% -10%,rgba(209,40,27,.45),transparent 62%),
+             radial-gradient(600px 420px at -6% 108%,rgba(242,183,5,.12),transparent 60%),var(--fondo)}
+.hero .wm{position:absolute;font-family:var(--disp);font-weight:900;color:rgba(255,255,255,.03);
+  font-size:clamp(120px,22vw,330px);top:46%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none}
+.w{max-width:1140px;margin:0 auto;padding:0 24px}
+.hero .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;position:relative;z-index:2}
+@media(max-width:900px){.hero .grid{grid-template-columns:1fr}}
+.hero h1{font-size:clamp(36px,6.2vw,64px);font-weight:900;margin:16px 0 12px;letter-spacing:-.04em}
+.hero h1 em{font-style:normal;color:var(--oro)}
+.hero p.sub{font-size:clamp(15px,2vw,18.5px);color:var(--tinta3);max-width:520px}
+.trust{display:flex;gap:16px;margin-top:22px;flex-wrap:wrap;font-size:12.5px;color:var(--tinta3)}
+.trust span{display:flex;gap:6px;align-items:center}
+.hero-foto{border-radius:22px;overflow:hidden;border:1px solid var(--linea);box-shadow:var(--sombra);position:relative}
+.hero-foto img{width:100%;aspect-ratio:4/3.4;object-fit:cover;object-position:left center}
+.hero-foto .flag{position:absolute;top:14px;left:14px}
+.ticker{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);background:var(--sup);padding:15px 0;overflow:hidden}
+.ticker-inner{display:flex;gap:44px;white-space:nowrap;animation:tk 26s linear infinite;width:max-content}
+.ticker-inner span{font-family:var(--disp);font-weight:700;font-size:13px;color:var(--tinta3)}
+.ticker-inner b{color:var(--oro)}
+@keyframes tk{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.ticker-inner{animation:none}}
+.sec{padding:70px 0}
+.sec-t{max-width:700px;margin-bottom:38px}
+.sec-t h2{font-size:clamp(26px,4.4vw,44px);font-weight:900;margin:10px 0}
+.sec-t p{color:var(--tinta3);font-size:16px}
+
+/* ── wizard ── */
+#wizardOverlay{position:fixed;inset:0;z-index:100;background:rgba(8,8,12,.9);backdrop-filter:blur(8px);
+  display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:22px}
+#wizardOverlay.open{display:flex}
+.wiz{width:100%;max-width:600px;background:linear-gradient(165deg,var(--sup2),#15151b);
+  border:1px solid var(--linea);border-radius:24px;box-shadow:var(--sombra);overflow:hidden;margin:auto}
+.wiz-top{padding:18px 24px;border-bottom:1px solid var(--linea);display:flex;align-items:center;gap:13px}
+.wiz-top img{height:28px}
+.prog{flex:1;height:9px;background:var(--fondo);border-radius:99px;overflow:hidden;border:1px solid var(--linea)}
+.prog i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--rojo-vivo),var(--oro));transition:width .5s cubic-bezier(.2,.75,.25,1)}
+.prog-lbl{font-family:var(--disp);font-weight:800;font-size:11px;color:var(--oro);min-width:34px;text-align:right}
+.wiz-body{padding:30px 28px 26px;min-height:360px}
+.paso{display:none;animation:pasoIn .4s cubic-bezier(.2,.75,.25,1) both}
+.paso.show{display:block}
+@keyframes pasoIn{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+.p-kick{font-family:var(--disp);font-weight:800;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--oro);margin-bottom:9px}
+.p-tit{font-family:var(--disp);font-weight:800;font-size:clamp(21px,3.6vw,27px);margin-bottom:6px;letter-spacing:-.02em}
+.p-help{color:var(--tinta3);font-size:14px;margin-bottom:20px}
+.opts{display:grid;gap:11px}
+.opt{display:flex;align-items:center;gap:13px;padding:15px 16px;border-radius:14px;cursor:pointer;
+  background:var(--fondo);border:1.5px solid var(--linea);transition:all .2s;font-weight:600;font-size:14.5px;
+  min-height:52px;position:relative;overflow:hidden}
+.opt:hover{border-color:rgba(242,183,5,.55);transform:translateX(4px)}
+.opt.sel{border-color:var(--oro);background:rgba(242,183,5,.09)}
+.opt .em{font-size:21px;flex:0 0 auto}
+.opt .ck{margin-left:auto;width:21px;height:21px;border-radius:50%;border:2px solid var(--linea);flex:0 0 auto;transition:all .2s}
+.opt.sel .ck{border-color:var(--oro);background:var(--oro);box-shadow:inset 0 0 0 4px var(--fondo)}
+.opt.sel::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) 50%,rgba(242,183,5,.14),transparent 60%);pointer-events:none}
+.wiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:12px}
+.atras{background:none;border:0;color:var(--tinta3);font-weight:600;font-size:13.5px;padding:8px;border-radius:8px}
+.atras:hover{color:#fff}
+.micro-hint{font-size:12px;color:var(--tinta3);margin-top:14px;display:flex;align-items:center;gap:6px}
+.campo{width:100%;margin-bottom:12px}
+.campo label{display:block;font-size:12px;font-weight:700;color:var(--tinta3);margin-bottom:5px}
+.campo input,.campo select{width:100%}
+.err{border-color:var(--rojo-vivo)!important;animation:shake .35s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* resultado */
+.res-ring{width:130px;height:130px;margin:0 auto 14px;position:relative}
+.res-ring svg{transform:rotate(-90deg)}
+.res-ring .lbl{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.res-ring b{font-family:var(--disp);font-weight:900;font-size:36px;line-height:1}
+.res-ring small{font-size:10px;color:var(--tinta3);text-transform:uppercase;letter-spacing:.12em}
+.badge-perfil{display:inline-flex;align-items:center;gap:8px;font-family:var(--disp);font-weight:800;
+  font-size:14px;padding:8px 18px;border-radius:99px;margin:6px 0 14px}
+.pasos-sig{display:grid;gap:9px;margin:18px 0;text-align:left}
+.paso-sig{display:flex;gap:12px;align-items:flex-start;background:var(--fondo);border:1px solid var(--linea);
+  border-radius:12px;padding:12px 14px;font-size:13px;color:var(--tinta3)}
+.paso-sig .n{background:var(--oro);color:#000;font-family:var(--disp);font-weight:900;width:22px;height:22px;
+  border-radius:50%;display:grid;place-items:center;font-size:11px;flex:0 0 auto}
+.paso-sig b{color:var(--tinta)}
+.qr-box{display:flex;gap:14px;align-items:center;justify-content:center;margin-top:14px}
+.qr-box img{width:78px;height:78px;border-radius:9px;border:3px solid #F6F4EF}
+.mini-cita{border-left:3px solid var(--oro);padding:10px 16px;margin:24px auto;max-width:430px;text-align:left;
+  font-size:13.5px;color:var(--tinta2);font-style:italic}
+.mini-cita small{display:block;font-style:normal;color:var(--tinta3);margin-top:5px;font-size:11.5px}
+.foot-land{background:#0A0A0E;border-top:1px solid var(--linea);padding:36px 0;color:var(--tinta3);font-size:12.5px}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wm">FIESTA</div>
+  <div class="w grid">
+    <div>
+      <img src="assets/logo.png" alt="Chisap Fiesta" style="height:52px;margin-bottom:18px">
+      <span class="pill rojo">● Zonas exclusivas disponibles · 2026</span>
+      <h1>Tu propio negocio, <em>con una marca de 70 años.</em></h1>
+      <p class="sub">Sistema llave en mano, sin royalties y con soporte real los primeros 90 días. Hacé el test de 2 minutos y descubrí si tu perfil califica — con tu proyección incluida.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:26px">
+        <button class="btn btn-oro" style="font-size:15.5px;padding:15px 28px" onclick="abrirWizard()" id="ctaHero">🚀 Descubrí tu perfil →</button>
+        <a class="btn btn-ghost" href="#como">Cómo funciona</a>
+      </div>
+      <div class="trust">
+        <span>✅ Sin compromiso</span><span>🔒 Tus datos no se comparten</span><span>⏱️ Te toma 2 minutos</span>
+      </div>
+    </div>
+    <div class="hero-foto rv">
+      <span class="flag pill oro">📍 34 sucursales activas</span>
+      <img src="assets/local-1.jpg" alt="Local Chisap Fiesta real con globos de apertura">
+    </div>
+  </div>
+</header>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true"><div class="ticker-inner" id="ticker"></div></div>
+
+<!-- POR QUÉ -->
+<section class="sec" id="como">
+  <div class="w">
+    <div class="sec-t rv"><span class="ojo">Por qué Chisap Fiesta</span>
+      <h2>No es tu primer negocio. Es el que tiene sentido.</h2></div>
+    <div class="g c4">
+      <div class="card hover rv"><div style="font-size:26px;margin-bottom:8px">🚫</div><h3 style="font-size:16px;margin-bottom:5px">Sin royalties</h3><p style="font-size:13px;color:var(--tinta3)">Lo que tu local genera queda en tu local. Siempre.</p></div>
+      <div class="card hover rv d1"><div style="font-size:26px;margin-bottom:8px">📊</div><h3 style="font-size:16px;margin-bottom:5px">Números honestos</h3><p style="font-size:13px;color:var(--tinta3)">Te mostramos el escenario bueno y el flojo antes de firmar.</p></div>
+      <div class="card hover rv d2"><div style="font-size:26px;margin-bottom:8px">🏭</div><h3 style="font-size:16px;margin-bottom:5px">Producción propia</h3><p style="font-size:13px;color:var(--tinta3)">3 fábricas: panificados, condimentos y salchichas.</p></div>
+      <div class="card hover rv d3"><div style="font-size:26px;margin-bottom:8px">🤝</div><h3 style="font-size:16px;margin-bottom:5px">Soporte real</h3><p style="font-size:13px;color:var(--tinta3)">Acompañamiento dedicado los primeros 90 días.</p></div>
+    </div>
+    <div style="text-align:center;margin-top:34px" class="rv">
+      <div class="mini-cita">"Arranqué sin saber nada de gastronomía. El sistema me sostuvo — y en once meses recuperé la inversión."<small>Marcelo · Franquiciado en Quilmes · 2 años con Chisap Fiesta</small></div>
+      <button class="btn btn-rojo" onclick="abrirWizard()">Quiero saber si califico →</button>
+    </div>
+  </div>
+</section>
+
+<footer class="foot-land">
+  <div class="w" style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center">
+    <span><b style="color:#fff">Chisap S.A.</b> · Desde 1956 · franquicias@chisap.com</span>
+    <a href="index.html" style="color:var(--oro)">← Volver al hub de la demo</a>
+  </div>
+</footer>
+
+<!-- ══════════ WIZARD ══════════ -->
+<div id="wizardOverlay" role="dialog" aria-modal="true" aria-label="Test de perfil de franquiciado">
+  <div class="wiz">
+    <div class="wiz-top">
+      <img src="assets/logo.png" alt="">
+      <div class="prog"><i id="progFill"></i></div>
+      <span class="prog-lbl" id="progLbl">12%</span>
+      <button class="x" onclick="cerrarWizard()" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="wiz-body" id="wizBody"></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="assets/store.js"></script>
+<script>
+/* ═════════ ticker social proof ═════════ */
+(function(){
+  var frases = ['🏪 <b>34</b> sucursales activas', '📅 Desde <b>1956</b> · 3ra generación',
+    '🚫 <b>0%</b> de royalties', '💰 Inversión desde <b>USD 15.000</b>', '⏱️ Recupero desde <b>12 meses</b>',
+    '🤝 Soporte real <b>90 días</b>', '🗺️ Territorio <b>exclusivo</b>'];
+  var html = frases.map(function(f){return '<span>'+f+'</span>'}).join('');
+  document.getElementById('ticker').innerHTML = html + html; // loop
+})();
+
+/* ═════════ reveal ═════════ */
+var io = new IntersectionObserver(function(es){es.forEach(function(e){
+  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.15});
+document.querySelectorAll('.rv').forEach(function(x){io.observe(x)});
+
+/* ═════════ WIZARD ═════════ */
+var P = CRM.PREGUNTAS;
+var PASOS = [
+  { key:'zona', tipo:'select', kick:'Arranquemos fácil', titulo:'¿En qué zona te gustaría abrir tu Chisap?',
+    help:'Chequeamos disponibilidad de territorio exclusivo en tu zona.' },
+  { key:'motivo', tipo:'opts', kick:'Paso 2 · Tu momento', titulo:P.motivo.titulo, help:'No hay respuesta incorrecta.' },
+  { key:'capital', tipo:'opts', kick:'Paso 3 · La inversión', titulo:P.capital.titulo,
+    help:'La inversión inicial arranca en USD 15.000. Contestá con honestidad: define qué formato te proponemos.' },
+  { key:'timeline', tipo:'opts', kick:'Paso 4 · Los tiempos', titulo:P.timeline.titulo, help:'' },
+  { key:'dedicacion', tipo:'opts', kick:'Paso 5 · Tu rol', titulo:P.dedicacion.titulo,
+    help:'Cada formato tiene su proyección. Muchos arrancan en paralelo a su empleo.' },
+  { key:'experiencia', tipo:'opts', kick:'Paso 6 · Tu experiencia', titulo:P.experiencia.titulo,
+    help:'Tranqui: no hace falta experiencia gastronómica.' },
+  { key:'necesita', tipo:'multi', kick:'Paso 7 · Casi listo', titulo:'¿Qué necesitás ver para decidir?',
+    help:'Elegí todas las que apliquen. Preparamos exactamente eso para tu llamada.' },
+  { key:'contacto', tipo:'form', kick:'Último paso', titulo:'¿A dónde te mandamos tu proyección?',
+    help:'Te contacta un asesor real (no un bot) en menos de 24 horas hábiles.' }
+];
+var idx = 0, R = { necesita: [] };
+
+function abrirWizard(){
+  idx = 0; R = { necesita: [] };
+  document.getElementById('wizardOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  render();
+}
+function cerrarWizard(){
+  document.getElementById('wizardOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+/* progreso dotado: arranca en 12% (endowed progress effect) */
+function setProg(){
+  var pct = Math.round(12 + (idx / PASOS.length) * 88);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progLbl').textContent = pct + '%';
+}
+function render(){
+  setProg();
+  var p = PASOS[idx], b = document.getElementById('wizBody');
+  var h = '<div class="paso show"><div class="p-kick">'+p.kick+'</div><div class="p-tit">'+p.titulo+'</div>' +
+          (p.help ? '<div class="p-help">'+p.help+'</div>' : '<div style="height:8px"></div>');
+  if (p.tipo === 'select'){
+    h += '<div class="opts">' + CRM.ZONAS.map(function(z,i){
+      return '<div class="opt'+(R.zona===z?' sel':'')+'" tabindex="0" role="button" onclick="elegirZona(\''+z.replace(/'/g,"\\'")+'\')" onkeydown="if(event.key===\'Enter\')this.click()"><span class="em">📍</span><span>'+z+'</span><span class="ck"></span></div>';
+    }).join('') + '</div>';
+  } else if (p.tipo === 'opts'){
+    h += '<div class="opts">' + P[p.key].opciones.map(function(o,i){
+      return '<div class="opt'+(R[p.key]===i?' sel':'')+'" tabindex="0" role="button" onclick="elegir(\''+p.key+'\','+i+')" onkeydown="if(event.key===\'Enter\')this.click()"><span class="em">'+o.e+'</span><span>'+o.t+'</span><span class="ck"></span></div>';
+    }).join('') + '</div>';
+  } else if (p.tipo === 'multi'){
+    h += '<div class="opts">' + CRM.NECESITA.map(function(o,i){
+      var sel = R.necesita.indexOf(i) >= 0;
+      return '<div class="opt'+(sel?' sel':'')+'" tabindex="0" role="button" onclick="toggleMulti('+i+')" onkeydown="if(event.key===\'Enter\')this.click()"><span class="em">'+['📊','🗣️','🏪','📄'][i]+'</span><span>'+o+'</span><span class="ck"></span></div>';
+    }).join('') + '</div><div class="micro-hint">✔️ Elegí todas las que apliquen — cada una suma a tu perfil</div>';
+  } else if (p.tipo === 'form'){
+    h += '<div class="campo"><label>Nombre y apellido</label><input id="f_nombre" autocomplete="name" placeholder="Ej: Diego Méndez" value="'+(R.nombre||'')+'"></div>' +
+         '<div class="campo"><label>WhatsApp</label><input id="f_wa" inputmode="tel" autocomplete="tel" placeholder="Ej: 11 5555 4444" value="'+(R.whatsapp||'')+'"></div>' +
+         '<div class="campo"><label>Email</label><input id="f_mail" inputmode="email" autocomplete="email" placeholder="Ej: diego@gmail.com" value="'+(R.email||'')+'"></div>' +
+         '<label style="display:flex;gap:9px;font-size:12.5px;color:var(--tinta3);margin-top:6px;align-items:flex-start;cursor:pointer">' +
+         '<input type="checkbox" id="f_ok" style="width:auto;margin-top:2px;accent-color:var(--oro)" '+(R.consent?'checked':'')+'>' +
+         'Acepto que me contacten por WhatsApp o email sobre la franquicia. Sin spam, prometido.</label>';
+  }
+  var ultimo = idx === PASOS.length - 1;
+  h += '<div class="wiz-nav"><button class="atras" onclick="atras()" '+(idx===0?'style="visibility:hidden"':'')+'>← Atrás</button>' +
+       '<button class="btn btn-oro" id="btnSig" onclick="siguiente()">'+(ultimo?'Ver mi resultado 🎯':'Siguiente →')+'</button></div></div>';
+  b.innerHTML = h;
+  if (p.tipo === 'form') setTimeout(function(){var e=document.getElementById('f_nombre'); if(e) e.focus();}, 80);
+}
+function elegirZona(z){ R.zona = z; render(); setTimeout(siguiente, 240); }
+function elegir(k, i){ R[k] = i; render(); setTimeout(siguiente, 240); } /* autoavance */
+function toggleMulti(i){
+  var p = R.necesita.indexOf(i);
+  if (p >= 0) R.necesita.splice(p, 1); else R.necesita.push(i);
+  render();
+}
+function atras(){ if (idx > 0){ idx--; render(); } }
+function flash(msg){
+  var btn = document.getElementById('btnSig'), orig = btn.textContent;
+  btn.textContent = msg; btn.style.background = 'var(--rojo-vivo)'; btn.style.color = '#fff';
+  setTimeout(function(){ btn.textContent = orig; btn.style.background=''; btn.style.color=''; }, 1400);
+}
+function siguiente(){
+  var p = PASOS[idx];
+  if (p.tipo === 'select' && !R.zona) return flash('Elegí tu zona');
+  if (p.tipo === 'opts' && R[p.key] == null) return flash('Elegí una opción');
+  if (p.tipo === 'multi' && !R.necesita.length) return flash('Elegí al menos una');
+  if (p.tipo === 'form'){
+    R.nombre = document.getElementById('f_nombre').value.trim();
+    R.whatsapp = document.getElementById('f_wa').value.trim();
+    R.email = document.getElementById('f_mail').value.trim();
+    R.consent = document.getElementById('f_ok').checked;
+    var falta = null;
+    if (!R.nombre) falta = 'f_nombre';
+    else if (!R.whatsapp || R.whatsapp.replace(/\D/g,'').length < 8) falta = 'f_wa';
+    else if (!R.email || R.email.indexOf('@') < 1) falta = 'f_mail';
+    if (falta){ var e = document.getElementById(falta); e.classList.add('err'); e.focus();
+      setTimeout(function(){e.classList.remove('err')}, 800); return flash('Completá este dato'); }
+    if (!R.consent) return flash('Necesitamos tu OK');
+    return terminar();
+  }
+  if (idx < PASOS.length - 1){ idx++; render(); }
+}
+
+function terminar(){
+  document.getElementById('progFill').style.width = '100%';
+  document.getElementById('progLbl').textContent = '100%';
+  var respuestas = { motivo: R.motivo, capital: R.capital, timeline: R.timeline,
+    dedicacion: R.dedicacion, experiencia: R.experiencia, necesita: R.necesita };
+  var lead = CRM.agregarLead({ nombre: R.nombre, zona: R.zona, whatsapp: R.whatsapp,
+    email: R.email, origen: 'Landing demo', respuestas: respuestas });
+  var seg = lead.segmento, sc = lead.score;
+  var da = 2 * Math.PI * 54, off = da * (1 - sc / 100);
+  var perfil = seg.id === 'caliente' ? { t: 'Perfil ideal', e: '🔥', msg: 'Tu perfil encaja muy bien con lo que funciona en la red. Te damos prioridad de contacto.' }
+    : seg.id === 'tibio' ? { t: 'Buen match', e: '🌤️', msg: 'Tenés varios de los ingredientes clave. Vale la pena que veamos los números juntos.' }
+    : { t: 'Perfil explorador', e: '🧭', msg: 'Estás en etapa de investigación — perfecto. Te mandamos info clara y sin presión.' };
+  document.getElementById('wizBody').innerHTML =
+    '<div class="paso show" style="text-align:center">' +
+    '<div class="res-ring"><svg width="130" height="130"><circle cx="65" cy="65" r="54" stroke="var(--linea)" stroke-width="11" fill="none"/>' +
+    '<circle id="ringSc" cx="65" cy="65" r="54" stroke="url(#gsc)" stroke-width="11" fill="none" stroke-linecap="round" stroke-dasharray="'+da+'" stroke-dashoffset="'+da+'"/>' +
+    '<defs><linearGradient id="gsc"><stop offset="0" stop-color="#F2B705"/><stop offset="1" stop-color="#FFD54A"/></linearGradient></defs></svg>' +
+    '<div class="lbl"><b id="scNum">0</b><small>tu perfil</small></div></div>' +
+    '<span class="badge-perfil" style="background:'+seg.color+'22;color:'+seg.color+';border:1px solid '+seg.color+'55">'+perfil.e+' '+perfil.t+'</span>' +
+    '<div style="font-family:var(--disp);font-weight:800;font-size:21px">¡Listo, '+R.nombre.split(' ')[0]+'!</div>' +
+    '<p style="color:var(--tinta3);font-size:14px;max-width:420px;margin:8px auto 0">'+perfil.msg+'</p>' +
+    '<div class="pasos-sig">' +
+    '<div class="paso-sig"><span class="n">1</span><span><b>En menos de 24 hs hábiles</b> te escribe tu asesor por WhatsApp.</span></div>' +
+    '<div class="paso-sig"><span class="n">2</span><span>Te manda <b>la proyección de tu zona</b>' + (R.necesita.length ? ' y ' + (R.necesita.length > 1 ? 'lo que pediste ver' : 'lo que pediste ver') : '') + '.</span></div>' +
+    '<div class="paso-sig"><span class="n">3</span><span>Si te cierra, coordinamos <b>una visita a un local activo</b>.</span></div>' +
+    '</div>' +
+    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px">' +
+    '<a class="btn btn-verde btn-sm" target="_blank" rel="noopener" href="https://wa.me/5491100000000?text='+encodeURIComponent('Hola! Completé el test de Chisap Fiesta. Soy '+R.nombre+' ('+R.zona+').')+'">💬 Adelantar por WhatsApp</a>' +
+    '<button class="btn btn-ghost btn-sm" onclick="cerrarWizard()">Cerrar</button></div>' +
+    '<p style="font-size:11px;color:var(--tinta3);margin-top:16px">🎬 <b style="color:var(--oro)">Demo:</b> tu lead ya entró al CRM — abrí el <a href="app.html" style="color:var(--oro);text-decoration:underline">lado del colaborador</a> y lo vas a ver primero en el pipeline.</p>' +
+    '</div>';
+  var n = 0; var t = setInterval(function(){ n++; document.getElementById('scNum').textContent = n; if (n >= sc) clearInterval(t); }, 16);
+  setTimeout(function(){ var r = document.getElementById('ringSc'); r.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.2,.75,.25,1)'; r.style.strokeDashoffset = off; }, 120);
+  confeti(seg.id === 'caliente' ? 60 : 24);
+}
+/* celebración suave */
+function confeti(n){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var colores = ['#F2B705','#E2231A','#25D366','#7B95FF','#FFD54A'];
+  for (var i = 0; i < n; i++){
+    var c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.top = '-12px';
+    c.style.background = colores[i % colores.length];
+    c.style.animationDelay = (Math.random() * .7) + 's';
+    c.style.width = c.style.height = (6 + Math.random() * 7) + 'px';
+    document.body.appendChild(c);
+    setTimeout(function(el){ return function(){ el.remove(); }; }(c), 3400);
+  }
+}
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') cerrarWizard();
+});
+</script>
+</body>
+</html>

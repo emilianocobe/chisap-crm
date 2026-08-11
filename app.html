@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chisap CRM · Backoffice</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="assets/brand.css">
+<style>
+/* ── extras del backoffice ── */
+.hdr-gam{display:flex;align-items:center;gap:12px;background:var(--sup);border:1px solid var(--linea);
+  border-radius:99px;padding:6px 14px 6px 8px}
+.hdr-gam .nivel-e{width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,var(--rojo),var(--rojo-osc));
+  display:grid;place-items:center;font-size:17px}
+.hdr-gam .xp-bar{width:90px;height:6px;background:var(--fondo);border-radius:99px;overflow:hidden}
+.hdr-gam .xp-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--oro),var(--oro-claro));border-radius:99px;transition:width .6s}
+.hdr-gam small{font-size:10px;color:var(--tinta3);display:block;line-height:1.2}
+.hdr-gam b{font-family:var(--disp);font-size:11.5px;line-height:1.2;display:block}
+.vista{display:none}
+.vista.act{display:block;animation:vIn .35s cubic-bezier(.2,.75,.25,1)}
+@keyframes vIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* actividad dot (patrón Pipedrive) */
+.act-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.act-verde{background:var(--verde)} .act-amarillo{background:var(--oro)} .act-rojo{background:var(--rojo-vivo)} .act-gris{background:#4A4A56}
+/* drop zones al arrastrar */
+#dropZones{position:fixed;left:0;right:0;bottom:-90px;z-index:70;display:flex;gap:14px;padding:14px 22px;transition:bottom .25s}
+#dropZones.show{bottom:0}
+.dz{flex:1;border-radius:16px;border:2px dashed;padding:20px;text-align:center;font-family:var(--disp);
+  font-weight:800;font-size:15px;backdrop-filter:blur(8px);transition:all .2s}
+.dz-perdido{border-color:var(--rojo-vivo);background:rgba(226,35,26,.16);color:var(--rojo-luz)}
+.dz-firmado{border-color:var(--verde);background:rgba(37,211,102,.14);color:var(--verde)}
+.dz.over{transform:scale(1.03);filter:brightness(1.3)}
+/* command palette */
+#cmdk{position:fixed;inset:0;z-index:150;display:none;align-items:flex-start;justify-content:center;
+  padding-top:12vh;background:rgba(6,6,10,.6);backdrop-filter:blur(4px)}
+#cmdk.open{display:flex}
+.cmdk-box{width:min(560px,94vw);background:var(--sup);border:1px solid var(--linea);border-radius:18px;
+  box-shadow:var(--sombra);overflow:hidden;animation:modalIn .25s cubic-bezier(.2,.75,.25,1)}
+.cmdk-box input{width:100%;border:0;border-bottom:1px solid var(--linea);border-radius:0;padding:17px 20px;font-size:15.5px;background:transparent}
+.cmdk-list{max-height:340px;overflow-y:auto;padding:8px}
+.cmdk-item{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:11px;cursor:pointer;font-size:13.5px}
+.cmdk-item.sel,.cmdk-item:hover{background:rgba(242,183,5,.1)}
+.cmdk-item .e{width:24px;text-align:center}
+.cmdk-item kbd{margin-left:auto;font-size:10px;background:var(--fondo);border:1px solid var(--linea);
+  border-radius:5px;padding:2px 7px;color:var(--tinta3);font-family:var(--texto)}
+kbd.k{font-size:10.5px;background:var(--fondo);border:1px solid var(--linea);border-radius:5px;padding:2px 7px;color:var(--tinta3)}
+/* scoring editor */
+.regla{display:grid;grid-template-columns:1fr 92px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--linea)}
+.regla:last-child{border:0}
+.regla .txt{font-size:13px;color:var(--tinta2)}
+.stepper{display:flex;align-items:center;gap:2px;background:var(--fondo);border:1px solid var(--linea);border-radius:10px;overflow:hidden}
+.stepper button{background:none;border:0;color:var(--tinta3);width:26px;height:30px;font-size:15px;font-weight:800}
+.stepper button:hover{background:rgba(255,255,255,.08);color:var(--oro)}
+.stepper span{flex:1;text-align:center;font-family:var(--disp);font-weight:800;font-size:13px;min-width:30px}
+.score-preview{position:sticky;top:20px}
+.rango{display:flex;align-items:center;gap:10px}
+.rango input[type=range]{flex:1;accent-color:var(--oro);padding:0;border:0;background:transparent}
+/* timeline vertical del lead */
+.tline{position:relative;padding-left:24px;display:grid;gap:13px}
+.tline:before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--linea);border-radius:2px}
+.tev{position:relative;font-size:12.5px;color:var(--tinta3)}
+.tev:before{content:'';position:absolute;left:-22px;top:4px;width:11px;height:11px;border-radius:50%;
+  background:var(--sup3);border:2px solid var(--linea)}
+.tev.hito:before{background:var(--oro);border-color:var(--oro-osc)}
+.tev b{color:var(--tinta);display:block;font-size:12.5px}
+.tev small{font-size:10.5px;color:var(--tinta3)}
+/* logros */
+.logro{display:flex;gap:13px;align-items:center;background:var(--sup);border:1px solid var(--linea);
+  border-radius:15px;padding:15px;transition:var(--t)}
+.logro .e{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:23px;
+  background:linear-gradient(140deg,rgba(242,183,5,.25),rgba(242,183,5,.06));border:1px solid rgba(242,183,5,.35)}
+.logro.off{opacity:.42;filter:grayscale(.8)}
+.logro.off .e{background:var(--fondo);border-color:var(--linea)}
+.logro b{font-family:var(--disp);font-size:13.5px;display:block}
+.logro p{font-size:11.5px;color:var(--tinta3)}
+.logro .xp{margin-left:auto;font-family:var(--disp);font-weight:800;font-size:12px;color:var(--oro);white-space:nowrap}
+/* leaderboard */
+.lb-row{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:13px;background:var(--sup2);
+  border:1px solid var(--linea);margin-bottom:9px}
+.lb-row .pos{font-family:var(--disp);font-weight:900;font-size:17px;width:26px;color:var(--tinta3)}
+.lb-row.top .pos{color:var(--oro)}
+.lb-row .em{font-size:23px}
+.lb-row .bar-mini{height:7px;background:var(--fondo);border-radius:99px;overflow:hidden;margin-top:5px}
+.lb-row .bar-mini i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--rojo-vivo),var(--oro));transition:width .8s}
+/* tour */
+.tour-paso{position:fixed;z-index:160;background:var(--sup);border:1px solid var(--oro);border-radius:15px;
+  padding:17px 19px;max-width:300px;box-shadow:var(--sombra);animation:modalIn .3s}
+.tour-paso b{font-family:var(--disp);display:block;margin-bottom:5px;font-size:14px}
+.tour-paso p{font-size:12.5px;color:var(--tinta3)}
+.filtros{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filtros select,.filtros input{padding:8px 11px;font-size:12.5px;border-radius:9px}
+.tag-nuevo{position:absolute;top:-7px;left:12px;background:var(--verde);color:#06371b;font-size:9px;
+  font-weight:900;padding:2px 8px;border-radius:99px;letter-spacing:.06em}
+@media print{.sidebar,#dropZones,#toasts{display:none!important}.app{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- ══════ SIDEBAR ══════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo"><img src="assets/logo.png" alt="Chisap"><div><b style="font-family:var(--disp);font-size:13px;display:block">Chisap CRM</b><small style="font-size:10px;color:var(--tinta3)">Backoffice · demo</small></div></div>
+    <button class="nav-item" data-v="dashboard"><span class="e">📊</span>Dashboard</button>
+    <button class="nav-item" data-v="pipeline"><span class="e">🧲</span>Pipeline<span class="badge" id="badgeNuevos"></span></button>
+    <button class="nav-item" data-v="leads"><span class="e">👥</span>Leads</button>
+    <button class="nav-item" data-v="scoring"><span class="e">🎛️</span>Scoring</button>
+    <button class="nav-item" data-v="equipo"><span class="e">🏆</span>Equipo y logros</button>
+    <button class="nav-item" data-v="glosario"><span class="e">📖</span>Glosario</button>
+    <button class="nav-item" data-v="config"><span class="e">⚙️</span>Configuración</button>
+    <div style="flex:1"></div>
+    <div class="card" style="padding:13px;font-size:11px;color:var(--tinta3)">
+      💡 <b style="color:var(--oro)">Tip:</b> apretá <kbd class="k">?</kbd> para ver los atajos o <kbd class="k">Ctrl K</kbd> para buscar.
+    </div>
+    <a class="nav-item" href="index.html"><span class="e">🎬</span>Hub de la demo</a>
+    <a class="nav-item" href="landing.html"><span class="e">🌐</span>Ver la landing</a>
+  </aside>
+
+  <!-- ══════ MAIN ══════ -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="vTitulo">Dashboard</h1>
+        <div class="sub" id="vSub">El pulso del negocio, en vivo</div>
+      </div>
+      <div style="display:flex;gap:11px;align-items:center;flex-wrap:wrap">
+        <div class="hdr-gam tooltip" data-tip="Tu progreso de colaborador" id="gamWidget"></div>
+        <button class="btn btn-oro btn-sm" onclick="abrirNuevoLead()">＋ Nuevo lead</button>
+      </div>
+    </div>
+    <div id="vistas">
+      <section class="vista" id="v-dashboard"></section>
+      <section class="vista" id="v-pipeline"></section>
+      <section class="vista" id="v-leads"></section>
+      <section class="vista" id="v-scoring"></section>
+      <section class="vista" id="v-equipo"></section>
+      <section class="vista" id="v-glosario"></section>
+      <section class="vista" id="v-config"></section>
+    </div>
+  </main>
+</div>
+
+<!-- drop zones (aparecen al arrastrar) -->
+<div id="dropZones">
+  <div class="dz dz-perdido" data-dz="perdido">✕ PERDIDO — soltá acá</div>
+  <div class="dz dz-firmado" data-dz="firmado">🏆 FIRMADO — soltá acá</div>
+</div>
+
+<!-- drawer detalle de lead -->
+<div class="overlay" id="ovl" onclick="cerrarDrawer()"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-label="Detalle del lead"></aside>
+
+<!-- command palette -->
+<div id="cmdk"><div class="cmdk-box">
+  <input id="cmdkInput" placeholder="Buscá un lead o una acción…  (Esc para cerrar)" autocomplete="off">
+  <div class="cmdk-list" id="cmdkList"></div>
+</div></div>
+
+<!-- modal genérico -->
+<div class="modal" id="modal"><div class="modal-box" id="modalBox"></div></div>
+
+<div id="toasts"></div>
+
+<script src="assets/store.js"></script>
+<script src="assets/charts.js"></script>
+<script>
+'use strict';
+/* ═══════════════ helpers ═══════════════ */
+function $(s, c){ return (c || document).querySelector(s); }
+function $$(s, c){ return Array.prototype.slice.call((c || document).querySelectorAll(s)); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function fechaCorta(t){ var d = new Date(t); return d.getDate() + ' ' + ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.getMonth()]; }
+function hace(t){
+  var d = Math.floor((Date.now() - t) / 86400000);
+  return d === 0 ? 'hoy' : d === 1 ? 'ayer' : 'hace ' + d + ' días';
+}
+var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function toast(titulo, msg, accionTxt, accionFn){
+  var t = document.createElement('div'); t.className = 'toast';
+  t.innerHTML = '<span style="font-size:19px">✅</span><div style="flex:1"><b>' + esc(titulo) + '</b>' +
+    (msg ? '<p>' + esc(msg) + '</p>' : '') + '</div>' +
+    (accionTxt ? '<button class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:11.5px">' + esc(accionTxt) + '</button>' : '');
+  if (accionTxt) $('button', t).onclick = function(){ accionFn(); quitar(); };
+  $('#toasts').appendChild(t);
+  function quitar(){ t.classList.add('exit'); setTimeout(function(){ t.remove(); }, 300); }
+  setTimeout(quitar, 5200);
+}
+function confeti(n){
+  if (reduceMotion) return;
+  var colores = ['#F2B705','#E2231A','#25D366','#7B95FF','#FFD54A'];
+  for (var i = 0; i < n; i++){
+    var c = document.createElement('div'); c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw'; c.style.top = '-12px';
+    c.style.background = colores[i % colores.length];
+    c.style.animationDelay = (Math.random() * .6) + 's';
+    document.body.appendChild(c);
+    setTimeout(function(el){ return function(){ el.remove(); }; }(c), 3300);
+  }
+}
+function equipo(id){ return CRM.EQUIPO.find(function(e){ return e.id === id; }) || { nombre: '—', emoji: '❔' }; }
+/* punto de actividad estilo Pipedrive */
+function actividadDot(l){
+  if (l.etapa === 'firmado' || l.etapa === 'perdido') return '';
+  var d = CRM.diasSinActividad(l), sla = CRM.state().config.slaDias;
+  var cls = d === 0 ? 'act-verde' : d <= Math.ceil(sla / 2) ? 'act-amarillo' : d <= sla ? 'act-gris' : 'act-rojo';
+  var tip = d === 0 ? 'Con actividad hoy' : d + ' día' + (d > 1 ? 's' : '') + ' sin actividad';
+  return '<span class="act-dot ' + cls + ' tooltip" data-tip="' + tip + '"></span>';
+}
+
+/* ═══════════════ navegación ═══════════════ */
+var VISTAS = {
+  dashboard: { t: 'Dashboard', s: 'El pulso del negocio, en vivo', fn: rDashboard },
+  pipeline:  { t: 'Pipeline', s: 'Arrastrá los leads entre etapas — o soltalos abajo para cerrar', fn: rPipeline },
+  leads:     { t: 'Leads', s: 'Todos los candidatos, con filtros y export', fn: rLeads },
+  scoring:   { t: 'Scoring editable', s: 'Ajustá los puntos y mirá el recálculo en vivo', fn: rScoring },
+  equipo:    { t: 'Equipo y logros', s: 'Metas, ranking y tu progreso de colaborador', fn: rEquipo },
+  glosario:  { t: 'Glosario visual', s: 'Los términos del CRM sin traductor', fn: rGlosario },
+  config:    { t: 'Configuración', s: 'Etapas, SLA, metas y reset de la demo', fn: rConfig }
+};
+var vistaActual = 'dashboard';
+function ir(v){
+  vistaActual = v;
+  location.hash = '/' + v;
+  $$('.nav-item[data-v]').forEach(function(n){ n.classList.toggle('act', n.dataset.v === v); });
+  $$('.vista').forEach(function(x){ x.classList.remove('act'); });
+  var el = $('#v-' + v); el.classList.add('act');
+  $('#vTitulo').textContent = VISTAS[v].t;
+  $('#vSub').textContent = VISTAS[v].s;
+  VISTAS[v].fn(el);
+  CRM.marcarSeccion(v);
+  renderGam();
+  $('#sidebar').classList.remove('open');
+}
+$$('.nav-item[data-v]').forEach(function(n){ n.onclick = function(){ ir(n.dataset.v); }; });
+
+/* ═══════════════ gamificación (header) ═══════════════ */
+function renderGam(){
+  var nv = CRM.nivel(), st = CRM.state();
+  $('#gamWidget').innerHTML =
+    '<div class="nivel-e">' + nv.actual.emoji + '</div>' +
+    '<div><b>' + nv.actual.nombre + ' · ' + st.gam.xp + ' XP</b>' +
+    '<div class="xp-bar"><i style="width:' + nv.progreso + '%"></i></div>' +
+    '<small>' + (nv.siguiente ? (nv.siguiente.min - st.gam.xp) + ' XP para ' + nv.siguiente.nombre : 'Nivel máximo') + '</small></div>' +
+    '<span style="font-size:15px" class="tooltip" data-tip="Racha de actividad">🔥' + st.gam.racha + '</span>';
+  var nuevos = CRM.leads({ etapa: 'nuevo' }).length;
+  $('#badgeNuevos').textContent = nuevos || '';
+  $('#badgeNuevos').style.display = nuevos ? 'grid' : 'none';
+}
+var logroMostrado = {};
+function chequearLogro(){
+  var ul = CRM.state().gam.ultimoLogro;
+  if (ul && !logroMostrado[ul]){
+    logroMostrado[ul] = 1;
+    var lg = CRM.LOGROS.find(function(x){ return x.id === ul; });
+    if (lg) toast(lg.emoji + ' ¡Logro desbloqueado: ' + lg.nombre + '!', lg.desc + ' · +' + lg.xp + ' XP');
+    CRM.state().gam.ultimoLogro = null; CRM.save();
+  }
+}
+
+/* ═══════════════ VISTA · DASHBOARD ═══════════════ */
+function rDashboard(el){
+  var m = CRM.metricas(), st = CRM.state();
+  var meta = st.config.metaMensualFirmas, pctMeta = Math.min(100, Math.round(100 * m.firmadosMes / meta));
+  var activos = m.total - m.porEtapa.firmado - m.porEtapa.perdido;
+  el.innerHTML =
+  '<div class="g c4">' +
+    '<div class="kpi oro"><span class="d up">este mes</span><div class="n">' + m.nuevosMes + '</div><div class="l">Leads nuevos del mes</div></div>' +
+    '<div class="kpi azul"><div class="n">' + activos + '</div><div class="l">Leads activos en el pipeline</div></div>' +
+    '<div class="kpi verde"><div class="n">' + m.firmadosMes + '<small>/' + meta + '</small></div><div class="l">Firmas del mes vs meta</div></div>' +
+    '<div class="kpi ' + (m.fueraSLA ? 'rojo' : '') + '"><div class="n">' + m.fueraSLA + '</div><div class="l">Leads enfriándose (fuera de SLA)</div></div>' +
+  '</div>' +
+  '<div class="card" style="margin-top:16px">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">' +
+    '<b style="font-family:var(--disp);font-size:14px">🎯 Meta del mes: ' + meta + ' franquicias firmadas</b>' +
+    '<span class="pill ' + (pctMeta >= 100 ? 'verde' : 'oro') + '">' + pctMeta + '%</span></div>' +
+    '<div class="bar" style="margin:0"><div class="tk" style="height:14px"><div class="fl ' + (pctMeta >= 100 ? 'verde' : 'oro') + '" style="width:' + pctMeta + '%"></div></div></div>' +
+    (pctMeta >= 100 ? '<p style="font-size:12px;color:var(--verde);margin-top:7px">🏆 ¡Meta cumplida! Todo lo que venga ahora es récord.</p>'
+      : '<p style="font-size:12px;color:var(--tinta3);margin-top:7px">Faltan ' + (meta - m.firmadosMes) + ' firma' + (meta - m.firmadosMes !== 1 ? 's' : '') + ' — hay ' + m.porEtapa.propuesta + ' en Propuesta y ' + m.porEtapa.visita + ' en Visita.</p>') +
+  '</div>' +
+  '<div class="g c2" style="margin-top:16px">' +
+    '<div class="ch"><h4>Embudo del pipeline</h4><div class="s">Cuántos llegaron al menos a cada etapa (% sobre el total)</div><div id="chFunnel"></div></div>' +
+    '<div class="ch"><h4>Leads nuevos por semana</h4><div class="s">Últimas 10 semanas</div><div id="chSerie"></div>' +
+    '<div class="leg"><span><i style="background:var(--oro)"></i>Leads captados</span></div></div>' +
+  '</div>' +
+  '<div class="g c2" style="margin-top:16px">' +
+    '<div class="ch"><h4>Temperatura de la base</h4><div class="s">Según el scoring vigente — editable en 🎛️ Scoring</div><div id="chSeg"></div></div>' +
+    '<div class="ch"><h4>Origen de los leads</h4><div class="s">De dónde llega cada candidato</div><div id="chOrigen"></div></div>' +
+  '</div>' +
+  '<div class="card" style="margin-top:16px">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">' +
+    '<b style="font-family:var(--disp);font-size:14px">🚨 Para accionar ya — leads que se enfrían</b>' +
+    '<button class="btn btn-ghost btn-sm" onclick="ir(\'pipeline\')">Ir al pipeline →</button></div>' +
+    '<div id="listaFrios"></div>' +
+  '</div>';
+  Charts.funnel($('#chFunnel'), m.funnel);
+  Charts.linea($('#chSerie'), m.serieSemanal, { labels: m.serieSemanal.map(function(_, i){ return i % 2 ? '' : 'S-' + (9 - i); }) });
+  Charts.donut($('#chSeg'), [
+    { label: '🔥 Calientes', valor: m.porSegmento.caliente, color: '#25D366' },
+    { label: '🌤️ Tibios', valor: m.porSegmento.tibio, color: '#F2B705' },
+    { label: '🧊 Fríos', valor: m.porSegmento.frio, color: '#7B95FF' }
+  ], { centro: m.total, centroSub: 'leads' });
+  var org = Object.keys(m.porOrigen).map(function(k){ return { label: k.replace(' Ads',''), valor: m.porOrigen[k] }; })
+    .sort(function(a, b){ return b.valor - a.valor; });
+  org.forEach(function(o, i){ o.destacar = i === 0; });
+  Charts.barras($('#chOrigen'), org, { fsx: 8.6 });
+  var frios = CRM.leads().filter(function(l){ return l.etapa !== 'firmado' && l.etapa !== 'perdido' && !CRM.enSLA(l); })
+    .sort(function(a, b){ return b.score - a.score; }).slice(0, 5);
+  $('#listaFrios').innerHTML = frios.length ? frios.map(function(l){
+    return '<div class="lb-row" style="cursor:pointer" onclick="abrirLead(\'' + l.id + '\')">' +
+      '<span style="font-size:17px">🥶</span><div style="flex:1"><b style="font-family:var(--disp);font-size:13px">' + esc(l.nombre) + '</b>' +
+      '<p style="font-size:11px;color:var(--tinta3)">' + CRM.etiquetaEtapa(l.etapa) + ' · ' + CRM.diasSinActividad(l) + ' días sin actividad · score ' + l.score + '</p></div>' +
+      '<span class="score-chip sc-' + l.segmento.id + '">' + l.score + '</span></div>';
+  }).join('') : '<div class="empty-col" style="border:0">🧊✨ Nada se enfría: todos los leads activos están dentro del SLA. ¡Así se labura!</div>';
+}
+
+/* ═══════════════ VISTA · PIPELINE (kanban) ═══════════════ */
+var dragId = null;
+function rPipeline(el){
+  var filtro = el.dataset.filtro || '';
+  var leads = CRM.leads().filter(function(l){ return l.etapa !== 'perdido'; });
+  if (filtro) leads = leads.filter(function(l){ return l.segmento.id === filtro; });
+  var html = '<div class="filtros" style="margin-bottom:15px">' +
+    '<span class="micro">Filtrar:</span>' +
+    ['', 'caliente', 'tibio', 'frio'].map(function(f){
+      var lbl = f === '' ? 'Todos' : f === 'caliente' ? '🔥 Calientes' : f === 'tibio' ? '🌤️ Tibios' : '🧊 Fríos';
+      return '<button class="btn ' + (filtro === f ? 'btn-oro' : 'btn-ghost') + ' btn-sm" onclick="filtrarPipe(\'' + f + '\')">' + lbl + '</button>';
+    }).join('') +
+    '<span style="flex:1"></span>' +
+    '<span class="pill">💡 Arrastrá una tarjeta — abajo aparecen las zonas Firmado / Perdido</span>' +
+    '</div><div class="kanban" id="kanban">';
+  CRM.ETAPAS.forEach(function(e){
+    var ls = leads.filter(function(l){ return l.etapa === e.id; })
+      .sort(function(a, b){ return b.score - a.score; });
+    html += '<div class="col" data-etapa="' + e.id + '">' +
+      '<div class="col-h"><span class="dot" style="background:' + e.color + '"></span><b>' + e.emoji + ' ' + e.nombre + '</b><span class="cnt">' + ls.length + '</span></div>' +
+      '<div class="col-body">' +
+      (ls.length ? ls.map(cardLead).join('') :
+        '<div class="empty-col">' + (e.id === 'nuevo' ? '✨ Los leads de la landing caen acá.<br>¡Probá el wizard!' : 'Arrastrá un lead hasta acá') + '</div>') +
+      '</div></div>';
+  });
+  html += '</div>';
+  el.innerHTML = html;
+  activarDnD();
+}
+function filtrarPipe(f){ var el = $('#v-pipeline'); el.dataset.filtro = f; rPipeline(el); }
+function cardLead(l){
+  var eq = equipo(l.asignado);
+  var fueraSLA = l.etapa !== 'firmado' && !CRM.enSLA(l);
+  return '<div class="lead-card" draggable="true" data-id="' + l.id + '" onclick="abrirLead(\'' + l.id + '\')" tabindex="0" ' +
+    'onkeydown="if(event.key===\'Enter\')abrirLead(\'' + l.id + '\')">' +
+    (l.nuevoDemo ? '<span class="tag-nuevo">TU LEAD</span>' : '') +
+    (fueraSLA ? '<span class="alerta-sla tooltip" data-tip="' + CRM.diasSinActividad(l) + ' días sin actividad">⏰</span>' : '') +
+    '<div class="nm"><span style="display:flex;gap:7px;align-items:center;min-width:0">' + actividadDot(l) +
+    '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(l.nombre) + '</span></span>' +
+    '<span class="score-chip sc-' + l.segmento.id + '">' + l.score + '</span></div>' +
+    '<div class="zn">📍 ' + esc(l.zona) + ' · ' + esc(l.origen) + '</div>' +
+    '<div class="ft"><span class="avatar tooltip" data-tip="' + eq.nombre + '">' + eq.emoji + '</span>' +
+    '<span style="font-size:10.5px;color:var(--tinta3)">' + hace(l.ultimaActividad) + '</span>' +
+    '<button class="btn btn-ghost btn-sm tooltip" data-tip="Mover a otra etapa" style="margin-left:auto;padding:3px 9px;font-size:10.5px" onclick="event.stopPropagation();menuMover(\'' + l.id + '\', this)">Mover ▾</button></div></div>';
+}
+function activarDnD(){
+  $$('.lead-card').forEach(function(c){
+    c.addEventListener('dragstart', function(e){
+      dragId = c.dataset.id; c.classList.add('dragging');
+      $('#dropZones').classList.add('show');
+      try { e.dataTransfer.setData('text/plain', dragId); } catch (err) {}
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    c.addEventListener('dragend', function(){
+      c.classList.remove('dragging'); $('#dropZones').classList.remove('show');
+      $$('.col,.dz').forEach(function(x){ x.classList.remove('drag-over', 'over'); });
+    });
+  });
+  $$('.col').forEach(function(col){
+    col.addEventListener('dragover', function(e){ e.preventDefault(); col.classList.add('drag-over'); });
+    col.addEventListener('dragleave', function(){ col.classList.remove('drag-over'); });
+    col.addEventListener('drop', function(e){
+      e.preventDefault(); col.classList.remove('drag-over');
+      if (dragId) moverCon(dragId, col.dataset.etapa);
+    });
+  });
+  $$('.dz').forEach(function(dz){
+    dz.addEventListener('dragover', function(e){ e.preventDefault(); dz.classList.add('over'); });
+    dz.addEventListener('dragleave', function(){ dz.classList.remove('over'); });
+    dz.addEventListener('drop', function(e){
+      e.preventDefault(); dz.classList.remove('over');
+      if (dragId) moverCon(dragId, dz.dataset.dz);
+    });
+  });
+}
+function moverCon(id, etapa){
+  var l = CRM.lead(id);
+  if (!l || l.etapa === etapa) return;
+  var desde = l.etapa;
+  if (etapa === 'perdido'){ modalPerdido(id, desde); return; }
+  CRM.moverLead(id, etapa);
+  refrescar();
+  if (etapa === 'firmado'){
+    confeti(90);
+    toast('🏆 ¡' + l.nombre + ' FIRMÓ!', 'Una franquicia más en la red. +100 XP', 'Deshacer', function(){ CRM.moverLead(id, desde); refrescar(); });
+    chequearLogro();
+  } else {
+    toast('Lead movido a ' + CRM.etiquetaEtapa(etapa), l.nombre, 'Deshacer', function(){ CRM.moverLead(id, desde); refrescar(); });
+    /* filosofía "next activity": pedir la próxima acción */
+    setTimeout(function(){ modalProximaAccion(id); }, 350);
+  }
+}
+function menuMover(id, btn){
+  var l = CRM.lead(id);
+  var opciones = CRM.ETAPAS.filter(function(e){ return e.id !== l.etapa; })
+    .map(function(e){ return '<button class="cmdk-item" style="width:100%" onclick="moverCon(\'' + id + '\',\'' + e.id + '\');cerrarModal()"><span class="e">' + e.emoji + '</span>' + e.nombre + '</button>'; }).join('') +
+    '<button class="cmdk-item" style="width:100%;color:var(--rojo-luz)" onclick="moverCon(\'' + id + '\',\'perdido\');"><span class="e">✕</span>Marcar como perdido</button>';
+  abrirModal('<h3 style="font-size:17px;margin-bottom:12px">Mover a ' + esc(l.nombre) + '</h3>' + opciones +
+    '<button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="cerrarModal()">Cancelar</button>');
+}
+function modalPerdido(id, desde){
+  var l = CRM.lead(id);
+  abrirModal('<h3 style="font-size:17px;margin-bottom:6px">✕ Marcar como perdido</h3>' +
+    '<p style="font-size:13px;color:var(--tinta3);margin-bottom:14px">' + esc(l.nombre) + ' — ¿por qué se pierde? Esto alimenta las métricas.</p>' +
+    ['Sin capital por ahora', 'Eligió otro rubro', 'No contesta', 'Zona sin disponibilidad', 'Otro'].map(function(m){
+      return '<button class="cmdk-item" style="width:100%" onclick="confirmarPerdido(\'' + id + '\',\'' + desde + '\',\'' + m + '\')"><span class="e">▸</span>' + m + '</button>';
+    }).join('') +
+    '<button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="cerrarModal()">Cancelar</button>');
+}
+function confirmarPerdido(id, desde, motivo){
+  cerrarModal();
+  var l = CRM.lead(id);
+  CRM.moverLead(id, 'perdido');
+  CRM.state().leads.find(function(x){ return x.id === id; }).motivoPerdida = motivo;
+  CRM.save(); refrescar();
+  toast('Lead marcado como perdido', motivo, 'Deshacer', function(){ CRM.moverLead(id, desde); refrescar(); });
+}
+function modalProximaAccion(id){
+  var l = CRM.lead(id);
+  if (!l || l.etapa === 'firmado' || l.etapa === 'perdido') return;
+  abrirModal('<h3 style="font-size:17px;margin-bottom:6px">📌 ¿Cuál es la próxima acción?</h3>' +
+    '<p style="font-size:13px;color:var(--tinta3);margin-bottom:14px">Un lead sin próxima acción es un lead que se enfría. (Filosofía Pipedrive)</p>' +
+    [['📞', 'Llamarlo mañana'], ['💬', 'Mandarle WhatsApp con la proyección'], ['🤝', 'Agendar reunión'], ['🏪', 'Coordinar visita al local']].map(function(a){
+      return '<button class="cmdk-item" style="width:100%" onclick="CRM.agregarActividad(\'' + id + '\',\'tarea\',\'Próxima acción: ' + a[1] + '\');cerrarModal();refrescar();toast(\'📌 Próxima acción agendada\',\'' + a[1] + ' · +5 XP\')"><span class="e">' + a[0] + '</span>' + a[1] + '</button>';
+    }).join('') +
+    '<button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="cerrarModal()">Ahora no</button>');
+}
+
+/* ═══════════════ VISTA · LEADS (tabla) ═══════════════ */
+function rLeads(el){
+  var q = (el.dataset.q || '').toLowerCase();
+  var ls = CRM.leads().sort(function(a, b){ return b.creadoEl - a.creadoEl; });
+  if (q) ls = ls.filter(function(l){ return (l.nombre + l.zona + l.origen + CRM.etiquetaEtapa(l.etapa)).toLowerCase().indexOf(q) >= 0; });
+  el.innerHTML = '<div class="filtros" style="margin-bottom:14px">' +
+    '<input id="buscaLeads" placeholder="🔍 Buscar por nombre, zona, origen…" style="min-width:250px" value="' + esc(el.dataset.q || '') + '">' +
+    '<span style="flex:1"></span>' +
+    '<button class="btn btn-ghost btn-sm" onclick="descargarCSV()">⬇ Exportar CSV</button></div>' +
+    '<div class="card" style="padding:6px 14px;overflow-x:auto"><table><thead><tr>' +
+    '<th>Lead</th><th>Zona</th><th>Origen</th><th>Etapa</th><th class="num">Score</th><th>Perfil</th><th>Actividad</th><th>Asignado</th></tr></thead><tbody>' +
+    ls.map(function(l){
+      var eq = equipo(l.asignado);
+      return '<tr style="cursor:pointer" onclick="abrirLead(\'' + l.id + '\')">' +
+        '<td><b>' + esc(l.nombre) + '</b><br><small style="color:var(--tinta3)">' + fechaCorta(l.creadoEl) + '</small></td>' +
+        '<td>' + esc(l.zona) + '</td><td>' + esc(l.origen) + '</td>' +
+        '<td><span class="pill" style="font-size:10.5px">' + CRM.etiquetaEtapa(l.etapa) + '</span></td>' +
+        '<td class="num"><b>' + l.score + '</b></td>' +
+        '<td><span class="score-chip sc-' + l.segmento.id + '">' + l.segmento.emoji + ' ' + l.segmento.nombre + '</span></td>' +
+        '<td style="white-space:nowrap">' + actividadDot(l) + ' ' + hace(l.ultimaActividad) + '</td>' +
+        '<td>' + eq.emoji + ' ' + esc(eq.nombre.split(' ')[0]) + '</td></tr>';
+    }).join('') + '</tbody></table>' +
+    (ls.length ? '' : '<div class="empty-col" style="margin:16px 0">🔍 Nada por acá con esa búsqueda. Probá con otro término.</div>') + '</div>';
+  var inp = $('#buscaLeads');
+  inp.oninput = function(){ el.dataset.q = inp.value; rLeads(el); var i2 = $('#buscaLeads'); i2.focus(); i2.setSelectionRange(i2.value.length, i2.value.length); };
+}
+function descargarCSV(){
+  var blob = new Blob(['﻿' + CRM.exportCSV()], { type: 'text/csv;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'chisap-crm-leads.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  toast('📄 CSV descargado', 'El pipeline completo, listo para Excel');
+}
+
+/* ═══════════════ VISTA · SCORING editable ═══════════════ */
+var reglasTemp = null;
+function rScoring(el){
+  reglasTemp = JSON.parse(JSON.stringify(CRM.state().reglas));
+  el.innerHTML = '<div class="g" style="grid-template-columns:1.25fr .75fr;align-items:start">' +
+    '<div id="scEditor"></div>' +
+    '<div class="score-preview" id="scPreview"></div></div>';
+  renderEditor(); renderPreview();
+}
+function renderEditor(){
+  var h = '<div class="card"><b style="font-family:var(--disp);font-size:14px">🎛️ Puntos por respuesta</b>' +
+    '<p style="font-size:12px;color:var(--tinta3);margin:4px 0 14px">Cada respuesta del wizard suma los puntos que definas acá. Cambiá un valor y mirá el impacto en vivo a la derecha.</p>';
+  ['motivo', 'capital', 'timeline', 'dedicacion', 'experiencia'].forEach(function(k){
+    h += '<div style="margin-bottom:16px"><div class="micro" style="margin-bottom:7px">' + CRM.PREGUNTAS[k].titulo + '</div>';
+    CRM.PREGUNTAS[k].opciones.forEach(function(o, i){
+      h += '<div class="regla"><span class="txt">' + o.e + ' ' + esc(o.t) + '</span>' +
+        '<div class="stepper"><button onclick="cambiarRegla(\'' + k + '\',' + i + ',-1)" aria-label="Restar">−</button>' +
+        '<span id="rg-' + k + '-' + i + '">' + reglasTemp[k][i] + '</span>' +
+        '<button onclick="cambiarRegla(\'' + k + '\',' + i + ',1)" aria-label="Sumar">＋</button></div></div>';
+    });
+    h += '</div>';
+  });
+  h += '<div class="regla" style="border-top:1px solid var(--linea);padding-top:14px"><span class="txt">➕ Bonus por cada "necesito ver…" (señal de intención)</span>' +
+    '<div class="stepper"><button onclick="cambiarBonus(-1)">−</button><span id="rg-bonus">' + reglasTemp.necesitaBonus + '</span><button onclick="cambiarBonus(1)">＋</button></div></div>' +
+    '</div>' +
+    '<div class="card" style="margin-top:14px"><b style="font-family:var(--disp);font-size:14px">🌡️ Umbrales de temperatura</b>' +
+    '<p style="font-size:12px;color:var(--tinta3);margin:4px 0 14px">Definen cuándo un lead es 🔥 caliente, 🌤️ tibio o 🧊 frío.</p>' +
+    '<div class="bar"><div class="tp"><b>🔥 Caliente desde</b><span id="lblCal">' + reglasTemp.umbralCaliente + ' puntos</span></div>' +
+    '<div class="rango"><input type="range" min="50" max="95" value="' + reglasTemp.umbralCaliente + '" oninput="cambiarUmbral(\'umbralCaliente\', this.value)"></div></div>' +
+    '<div class="bar"><div class="tp"><b>🌤️ Tibio desde</b><span id="lblTib">' + reglasTemp.umbralTibio + ' puntos</span></div>' +
+    '<div class="rango"><input type="range" min="20" max="70" value="' + reglasTemp.umbralTibio + '" oninput="cambiarUmbral(\'umbralTibio\', this.value)"></div></div>' +
+    '</div>' +
+    '<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">' +
+    '<button class="btn btn-oro" onclick="guardarReglas()">💾 Guardar y recalcular todo</button>' +
+    '<button class="btn btn-ghost" onclick="restaurarReglas()">Restaurar valores por defecto</button></div>';
+  $('#scEditor').innerHTML = h;
+}
+function cambiarRegla(k, i, d){
+  reglasTemp[k][i] = Math.max(0, Math.min(40, reglasTemp[k][i] + d));
+  $('#rg-' + k + '-' + i).textContent = reglasTemp[k][i];
+  renderPreview();
+}
+function cambiarBonus(d){
+  reglasTemp.necesitaBonus = Math.max(0, Math.min(10, reglasTemp.necesitaBonus + d));
+  $('#rg-bonus').textContent = reglasTemp.necesitaBonus;
+  renderPreview();
+}
+function cambiarUmbral(k, v){
+  reglasTemp[k] = +v;
+  if (reglasTemp.umbralTibio >= reglasTemp.umbralCaliente) reglasTemp.umbralTibio = reglasTemp.umbralCaliente - 5;
+  $('#lblCal').textContent = reglasTemp.umbralCaliente + ' puntos';
+  $('#lblTib').textContent = reglasTemp.umbralTibio + ' puntos';
+  renderPreview();
+}
+function renderPreview(){
+  /* impacto en vivo sobre toda la base con las reglas temporales */
+  var ls = CRM.state().leads, seg = { caliente: 0, tibio: 0, frio: 0 }, cambios = 0;
+  ls.forEach(function(l){
+    var nuevo = CRM.calcularScore(l.respuestas, reglasTemp).score;
+    var viejo = CRM.calcularScore(l.respuestas).score;
+    if (nuevo !== viejo) cambios++;
+    var s = CRM.segmento(nuevo, reglasTemp); seg[s.id]++;
+  });
+  var ejemplo = CRM.leads()[0];
+  var det = CRM.calcularScore(ejemplo.respuestas, reglasTemp);
+  var segEj = CRM.segmento(det.score, reglasTemp);
+  $('#scPreview').innerHTML =
+    '<div class="card" style="border-color:rgba(242,183,5,.4)"><b style="font-family:var(--disp);font-size:14px">⚡ Impacto en vivo</b>' +
+    '<p style="font-size:12px;color:var(--tinta3);margin:4px 0 12px">Así quedaría la base con estas reglas:</p>' +
+    '<div class="bar"><div class="tp"><b>🔥 Calientes</b><span>' + seg.caliente + ' leads</span></div><div class="tk"><div class="fl verde" style="width:' + (100 * seg.caliente / ls.length) + '%"></div></div></div>' +
+    '<div class="bar"><div class="tp"><b>🌤️ Tibios</b><span>' + seg.tibio + ' leads</span></div><div class="tk"><div class="fl oro" style="width:' + (100 * seg.tibio / ls.length) + '%"></div></div></div>' +
+    '<div class="bar"><div class="tp"><b>🧊 Fríos</b><span>' + seg.frio + ' leads</span></div><div class="tk"><div class="fl azul" style="width:' + (100 * seg.frio / ls.length) + '%"></div></div></div>' +
+    '<p style="font-size:11.5px;color:var(--oro);margin-top:8px">' + (cambios ? '✏️ ' + cambios + ' leads cambiarían de score' : 'Sin cambios sobre el score actual') + '</p></div>' +
+    '<div class="card" style="margin-top:13px"><b style="font-family:var(--disp);font-size:13px">🧪 Probador: ' + esc(ejemplo.nombre) + '</b>' +
+    '<div style="display:flex;align-items:center;gap:12px;margin:10px 0 12px">' +
+    '<span class="mega" style="font-size:44px;color:' + segEj.color + '">' + det.score + '</span>' +
+    '<span class="score-chip sc-' + segEj.id + '" style="font-size:12px">' + segEj.emoji + ' ' + segEj.nombre + '</span></div>' +
+    det.detalle.map(function(d){
+      return '<div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--tinta3);padding:4px 0;border-bottom:1px solid var(--linea)">' +
+        '<span style="max-width:75%">' + esc(d.opcion) + '</span><b style="color:var(--oro)">+' + d.puntos + '</b></div>';
+    }).join('') + '</div>';
+}
+function guardarReglas(){
+  CRM.setReglas(reglasTemp);
+  toast('🎛️ Scoring actualizado', 'Todos los leads fueron recalculados al instante. +15 XP');
+  chequearLogro(); refrescar();
+}
+function restaurarReglas(){
+  reglasTemp = JSON.parse(JSON.stringify(CRM.REGLAS_DEFAULT));
+  renderEditor(); renderPreview();
+  toast('Valores por defecto restaurados', 'Guardá para aplicarlos');
+}
+
+/* ═══════════════ VISTA · EQUIPO / GAMIFICACIÓN ═══════════════ */
+function rEquipo(el){
+  var st = CRM.state(), nv = CRM.nivel(), ls = CRM.leads();
+  /* leaderboard: mezcla actividades + firmas (no solo revenue) */
+  var stats = CRM.EQUIPO.map(function(e){
+    var propios = ls.filter(function(l){ return l.asignado === e.id; });
+    var acts = propios.reduce(function(a, l){ return a + l.actividad.length; }, 0);
+    var firmas = propios.filter(function(l){ return l.etapa === 'firmado'; }).length;
+    return { eq: e, leads: propios.length, acts: acts, firmas: firmas, puntos: acts * 2 + firmas * 25 };
+  }).sort(function(a, b){ return b.puntos - a.puntos; });
+  var maxP = stats[0].puntos || 1;
+  el.innerHTML = '<div class="g c3">' +
+    '<div class="kpi oro"><div class="n">' + st.gam.xp + '</div><div class="l">Tu XP acumulada — nivel ' + nv.actual.nombre + ' ' + nv.actual.emoji + '</div></div>' +
+    '<div class="kpi"><div class="n">🔥 ' + st.gam.racha + '</div><div class="l">Días seguidos con actividad registrada</div></div>' +
+    '<div class="kpi verde"><div class="n">' + st.gam.logros.length + '<small>/' + CRM.LOGROS.length + '</small></div><div class="l">Logros desbloqueados</div></div>' +
+    '</div>' +
+    '<div class="g c2" style="margin-top:16px;align-items:start">' +
+    '<div><div class="card"><b style="font-family:var(--disp);font-size:14px">🏁 Ranking del equipo — ' + new Date().toLocaleDateString('es-AR', { month: 'long' }) + '</b>' +
+    '<p style="font-size:11.5px;color:var(--tinta3);margin:3px 0 13px">Puntúa la actividad (×2) y las firmas (×25) — no solo el cierre. Se resetea cada mes.</p>' +
+    stats.map(function(s, i){
+      return '<div class="lb-row' + (i === 0 ? ' top' : '') + '"><span class="pos">' + (i + 1) + (i === 0 ? '°🥇' : '°') + '</span>' +
+        '<span class="em">' + s.eq.emoji + '</span><div style="flex:1"><b style="font-family:var(--disp);font-size:13px">' + s.eq.nombre + '</b>' +
+        '<p style="font-size:10.5px;color:var(--tinta3)">' + s.leads + ' leads · ' + s.acts + ' actividades · ' + s.firmas + ' firmas</p>' +
+        '<div class="bar-mini"><i style="width:' + (100 * s.puntos / maxP) + '%"></i></div></div>' +
+        '<b style="font-family:var(--disp);color:var(--oro)">' + s.puntos + ' pts</b></div>';
+    }).join('') + '</div>' +
+    '<div class="card" style="margin-top:14px"><b style="font-family:var(--disp);font-size:13.5px">📈 Tu camino de nivel</b>' +
+    '<div style="display:flex;gap:6px;margin-top:13px;align-items:flex-end">' +
+    CRM.NIVELES.map(function(n){
+      var pasado = st.gam.xp >= n.min, actual = nv.actual.nombre === n.nombre;
+      return '<div style="flex:1;text-align:center"><div style="font-size:' + (actual ? 26 : 18) + 'px;filter:' + (pasado ? 'none' : 'grayscale(1)') + ';opacity:' + (pasado ? 1 : .4) + '">' + n.emoji + '</div>' +
+        '<div style="font-size:9px;color:' + (actual ? 'var(--oro)' : 'var(--tinta3)') + ';font-weight:' + (actual ? 800 : 500) + '">' + n.nombre + '</div>' +
+        '<div style="font-size:8.5px;color:var(--tinta3)">' + n.min + '+</div></div>';
+    }).join('') + '</div>' +
+    '<div class="bar" style="margin-top:12px"><div class="tk"><div class="fl oro" style="width:' + nv.progreso + '%"></div></div></div>' +
+    '<p style="font-size:11px;color:var(--tinta3);margin-top:5px">' + (nv.siguiente ? 'Te faltan ' + (nv.siguiente.min - st.gam.xp) + ' XP para ser ' + nv.siguiente.nombre + ' ' + nv.siguiente.emoji : '¡Nivel máximo!') + '</p></div></div>' +
+    '<div><div class="card"><b style="font-family:var(--disp);font-size:14px">🏅 Logros</b>' +
+    '<p style="font-size:11.5px;color:var(--tinta3);margin:3px 0 13px">Pocos y con significado. Cada uno cuenta una historia real de gestión.</p>' +
+    '<div style="display:grid;gap:9px">' +
+    CRM.LOGROS.map(function(lg){
+      var tiene = st.gam.logros.indexOf(lg.id) >= 0;
+      return '<div class="logro' + (tiene ? '' : ' off') + '"><div class="e">' + lg.emoji + '</div>' +
+        '<div><b>' + lg.nombre + '</b><p>' + lg.desc + '</p></div><span class="xp">+' + lg.xp + ' XP</span></div>';
+    }).join('') + '</div></div></div></div>';
+}
+
+/* ═══════════════ VISTA · GLOSARIO ═══════════════ */
+function rGlosario(el){
+  var G = [
+    ['🧲', 'Pipeline', 'El recorrido del lead desde que llega hasta que firma. Cada columna es una etapa.'],
+    ['🎯', 'Lead', 'Una persona que dejó sus datos y quiere saber más de la franquicia.'],
+    ['💯', 'Score', 'Puntaje 0-100 según las respuestas del wizard. Las reglas se editan en Scoring.'],
+    ['🔥', 'Caliente', 'Score alto: capital, urgencia y perfil alineados. Contactar en menos de 24 hs.'],
+    ['🌤️', 'Tibio', 'Buen perfil con dudas o tiempos largos. Seguimiento cercano.'],
+    ['🧊', 'Frío', 'Explorando. Va a nurture: contenido y paciencia.'],
+    ['⏰', 'SLA', 'Días máximos sin actividad antes de que el lead se marque como "enfriándose".'],
+    ['📌', 'Próxima acción', 'Regla de oro: todo lead activo debe tener SIEMPRE una próxima acción agendada.'],
+    ['✨', 'XP', 'Puntos de experiencia del colaborador. Se ganan gestionando, no mirando.'],
+    ['🏅', 'Logro', 'Insignia por hitos reales: primera firma, racha de actividad, pipeline sano.'],
+    ['📊', 'Embudo', 'Cuántos leads llegan a cada etapa. Muestra dónde se caen.'],
+    ['⬇️', 'CSV', 'Export del pipeline para Excel. Botón en la vista Leads.']
+  ];
+  el.innerHTML = '<div class="g c3">' + G.map(function(g, i){
+    return '<div class="card hover"><div style="font-size:26px;margin-bottom:8px">' + g[0] + '</div>' +
+      '<h3 style="font-size:15px;color:var(--oro);margin-bottom:5px">' + g[1] + '</h3>' +
+      '<p style="font-size:12.5px;color:var(--tinta3)">' + g[2] + '</p></div>';
+  }).join('') + '</div>' +
+  '<div class="card" style="margin-top:16px"><b style="font-family:var(--disp)">⌨️ Atajos de teclado</b>' +
+  '<div class="g c2" style="margin-top:12px;font-size:13px;color:var(--tinta3)">' +
+  '<div><kbd class="k">Ctrl K</kbd> Buscar lead o acción</div><div><kbd class="k">N</kbd> Nuevo lead</div>' +
+  '<div><kbd class="k">G</kbd> + <kbd class="k">D</kbd> Ir al Dashboard</div><div><kbd class="k">G</kbd> + <kbd class="k">P</kbd> Ir al Pipeline</div>' +
+  '<div><kbd class="k">G</kbd> + <kbd class="k">S</kbd> Ir a Scoring</div><div><kbd class="k">?</kbd> Esta ayuda</div>' +
+  '<div><kbd class="k">Esc</kbd> Cerrar paneles</div><div><kbd class="k">Enter</kbd> Abrir tarjeta enfocada</div></div></div>';
+}
+
+/* ═══════════════ VISTA · CONFIG ═══════════════ */
+function rConfig(el){
+  var c = CRM.state().config;
+  el.innerHTML = '<div class="g c2" style="align-items:start">' +
+    '<div class="card"><b style="font-family:var(--disp);font-size:14px">⚙️ Parámetros de gestión</b>' +
+    '<div class="campo" style="margin-top:14px"><label>Meta mensual de firmas</label>' +
+    '<input type="number" min="1" max="30" value="' + c.metaMensualFirmas + '" id="cfgMeta" style="width:110px"></div>' +
+    '<div class="campo"><label>SLA — días máximos sin actividad</label>' +
+    '<input type="number" min="1" max="30" value="' + c.slaDias + '" id="cfgSla" style="width:110px"></div>' +
+    '<button class="btn btn-oro btn-sm" onclick="guardarCfg()">💾 Guardar</button></div>' +
+    '<div class="card"><b style="font-family:var(--disp);font-size:14px">🧭 Etapas del pipeline</b>' +
+    '<p style="font-size:12px;color:var(--tinta3);margin:4px 0 12px">El recorrido que hace cada candidato (fijo en la demo):</p>' +
+    '<div style="display:grid;gap:8px">' + CRM.ETAPAS.map(function(e, i){
+      return '<div style="display:flex;gap:10px;align-items:center;font-size:13px">' +
+        '<span style="width:22px;height:22px;border-radius:7px;background:' + e.color + '22;border:1px solid ' + e.color + '66;display:grid;place-items:center;font-size:12px">' + e.emoji + '</span>' +
+        '<b style="font-family:var(--disp)">' + (i + 1) + '. ' + e.nombre + '</b></div>';
+    }).join('') + '</div></div></div>' +
+    '<div class="card" style="margin-top:16px;border-color:rgba(226,35,26,.35)">' +
+    '<b style="font-family:var(--disp);font-size:14px">🔄 Demo</b>' +
+    '<p style="font-size:12.5px;color:var(--tinta3);margin:5px 0 12px">Volvé al estado inicial: 28 leads de ejemplo, reglas por defecto y XP inicial. Ideal antes de mostrar la demo a alguien nuevo.</p>' +
+    '<button class="btn btn-rojo btn-sm" onclick="resetDemo()">Reiniciar la demo desde cero</button></div>';
+}
+function guardarCfg(){
+  var st = CRM.state();
+  st.config.metaMensualFirmas = Math.max(1, +$('#cfgMeta').value || 4);
+  st.config.slaDias = Math.max(1, +$('#cfgSla').value || 5);
+  CRM.save(); toast('⚙️ Configuración guardada', 'Meta y SLA actualizados'); refrescar();
+}
+function resetDemo(){
+  abrirModal('<h3 style="font-size:17px;margin-bottom:8px">¿Reiniciar la demo?</h3>' +
+    '<p style="font-size:13px;color:var(--tinta3);margin-bottom:16px">Se pierden los leads creados desde la landing y los cambios de scoring. Vuelve todo al estado inicial.</p>' +
+    '<div style="display:flex;gap:10px"><button class="btn btn-rojo" onclick="CRM.reset();cerrarModal();refrescar();toast(\'🔄 Demo reiniciada\',\'Todo volvió al estado inicial\')">Sí, reiniciar</button>' +
+    '<button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button></div>');
+}
+
+/* ═══════════════ DRAWER · detalle de lead ═══════════════ */
+var leadAbierto = null;
+function abrirLead(id){
+  var l = CRM.lead(id); if (!l) return;
+  leadAbierto = id;
+  var eq = equipo(l.asignado);
+  var P = CRM.PREGUNTAS, r = l.respuestas;
+  $('#drawer').innerHTML =
+    '<div class="drawer-h"><div style="flex:1">' +
+    '<div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">' +
+    '<h2 style="font-size:19px">' + esc(l.nombre) + '</h2>' +
+    '<span class="score-chip sc-' + l.segmento.id + '" style="font-size:12px">' + l.segmento.emoji + ' ' + l.score + '</span>' +
+    (l.etapa === 'perdido' ? '<span class="pill rojo">✕ Perdido</span>' : '<span class="pill">' + CRM.etiquetaEtapa(l.etapa) + '</span>') + '</div>' +
+    '<p style="font-size:12px;color:var(--tinta3);margin-top:4px">📍 ' + esc(l.zona) + ' · vía ' + esc(l.origen) + ' · llegó ' + hace(l.creadoEl) + ' · atiende ' + eq.emoji + ' ' + esc(eq.nombre) + '</p></div>' +
+    '<button class="x" onclick="cerrarDrawer()" aria-label="Cerrar">✕</button></div>' +
+    '<div class="drawer-b">' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">' +
+    '<a class="btn btn-verde btn-sm" target="_blank" rel="noopener" href="https://wa.me/549' + l.whatsapp.replace(/\D/g, '') + '?text=' + encodeURIComponent('Hola ' + l.nombre.split(' ')[0] + '! Soy ' + eq.nombre.split(' ')[0] + ' de Chisap Fiesta.') + '">💬 WhatsApp</a>' +
+    '<a class="btn btn-ghost btn-sm" href="mailto:' + esc(l.email) + '">✉️ Email</a>' +
+    '<button class="btn btn-ghost btn-sm" onclick="menuMover(\'' + l.id + '\')">🧭 Mover ▾</button>' +
+    '<button class="btn btn-oro btn-sm" onclick="modalProximaAccion(\'' + l.id + '\')">📌 Próxima acción</button></div>' +
+    '<div class="card" style="padding:16px;margin-bottom:14px"><b style="font-family:var(--disp);font-size:13px">💯 Desglose del score</b>' +
+    l.scoreDetalle.map(function(d){
+      return '<div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--tinta3);padding:5px 0;border-bottom:1px solid var(--linea)">' +
+        '<span>' + esc(d.opcion) + '</span><b style="color:var(--oro);white-space:nowrap">+' + d.puntos + '</b></div>';
+    }).join('') +
+    '<div style="display:flex;justify-content:space-between;font-size:12.5px;padding-top:7px"><b>Total (÷' + CRM.state().reglas.escala + ', tope 100)</b><b style="color:var(--oro)">' + l.score + '</b></div></div>' +
+    '<div class="card" style="padding:16px;margin-bottom:14px"><b style="font-family:var(--disp);font-size:13px">📋 Sus respuestas del wizard</b>' +
+    '<div style="display:grid;gap:7px;margin-top:9px;font-size:12px;color:var(--tinta3)">' +
+    ['motivo', 'capital', 'timeline', 'dedicacion', 'experiencia'].map(function(k){
+      var o = P[k].opciones[r[k]];
+      return '<div>▸ ' + (o ? o.e + ' ' + esc(o.t) : '—') + '</div>';
+    }).join('') +
+    ((r.necesita || []).length ? '<div>▸ 👀 Pidió ver: <b style="color:var(--tinta)">' + r.necesita.map(function(i){ return CRM.NECESITA[i]; }).join(' · ') + '</b></div>' : '') +
+    '</div></div>' +
+    (l.motivoPerdida ? '<div class="card" style="padding:14px;margin-bottom:14px;border-color:rgba(226,35,26,.4)"><b style="font-size:12.5px;color:var(--rojo-luz)">✕ Motivo de pérdida: ' + esc(l.motivoPerdida) + '</b></div>' : '') +
+    '<div class="card" style="padding:16px;margin-bottom:14px"><b style="font-family:var(--disp);font-size:13px">📝 Notas</b>' +
+    '<div id="notasList" style="margin:9px 0">' +
+    (l.notas.length ? l.notas.map(function(n){ return '<div style="font-size:12px;color:var(--tinta2);background:var(--fondo);border:1px solid var(--linea);border-radius:9px;padding:9px 11px;margin-bottom:7px">' + esc(n.texto) + '<br><small style="color:var(--tinta3)">' + hace(n.t) + '</small></div>'; }).join('') : '<p style="font-size:11.5px;color:var(--tinta3)">Sin notas todavía.</p>') + '</div>' +
+    '<div style="display:flex;gap:8px"><input id="notaInput" placeholder="Escribí una nota y Enter…" style="flex:1" onkeydown="if(event.key===\'Enter\')agregarNotaUI()">' +
+    '<button class="btn btn-oro btn-sm" onclick="agregarNotaUI()">＋</button></div></div>' +
+    '<b style="font-family:var(--disp);font-size:13px;display:block;margin-bottom:11px">🕓 Línea de tiempo</b>' +
+    '<div class="tline">' + l.actividad.slice().reverse().map(function(a){
+      var hito = a.tipo === 'firma' || a.tipo === 'alta';
+      return '<div class="tev' + (hito ? ' hito' : '') + '"><b>' + esc(a.texto) + '</b><small>' + fechaCorta(a.t) + ' · ' + hace(a.t) + '</small></div>';
+    }).join('') + '</div></div>';
+  $('#ovl').classList.add('open'); $('#drawer').classList.add('open');
+}
+function cerrarDrawer(){ $('#ovl').classList.remove('open'); $('#drawer').classList.remove('open'); leadAbierto = null; }
+function agregarNotaUI(){
+  var v = $('#notaInput').value.trim(); if (!v || !leadAbierto) return;
+  CRM.agregarNota(leadAbierto, v);
+  toast('📝 Nota guardada', '+5 XP');
+  abrirLead(leadAbierto); refrescar(false);
+}
+
+/* ═══════════════ modal genérico ═══════════════ */
+function abrirModal(html){ $('#modalBox').innerHTML = html; $('#modal').classList.add('open'); }
+function cerrarModal(){ $('#modal').classList.remove('open'); }
+$('#modal').addEventListener('click', function(e){ if (e.target.id === 'modal') cerrarModal(); });
+
+/* ═══════════════ nuevo lead manual ═══════════════ */
+function abrirNuevoLead(){
+  abrirModal('<h3 style="font-size:17px;margin-bottom:6px">＋ Nuevo lead manual</h3>' +
+    '<p style="font-size:12.5px;color:var(--tinta3);margin-bottom:14px">Para leads que llegan por teléfono o ferias. Los de la landing entran solos.</p>' +
+    '<div class="campo"><label>Nombre y apellido</label><input id="nl_nombre" placeholder="Ej: Laura Benítez"></div>' +
+    '<div class="campo"><label>Zona</label><select id="nl_zona">' + CRM.ZONAS.map(function(z){ return '<option>' + z + '</option>'; }).join('') + '</select></div>' +
+    '<div class="campo"><label>Origen</label><select id="nl_origen">' + CRM.ORIGENES.map(function(o){ return '<option>' + o + '</option>'; }).join('') + '</select></div>' +
+    '<div class="g c2"><div class="campo"><label>WhatsApp</label><input id="nl_wa" placeholder="11 5555 4444"></div>' +
+    '<div class="campo"><label>Email</label><input id="nl_mail" placeholder="lead@mail.com"></div></div>' +
+    '<div style="display:flex;gap:10px;margin-top:6px"><button class="btn btn-oro" onclick="crearLeadManual()">Crear lead</button>' +
+    '<button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button></div>');
+  setTimeout(function(){ $('#nl_nombre').focus(); }, 60);
+}
+function crearLeadManual(){
+  var nombre = $('#nl_nombre').value.trim();
+  if (!nombre){ $('#nl_nombre').classList.add('err'); setTimeout(function(){ $('#nl_nombre').classList.remove('err'); }, 700); return; }
+  var l = CRM.agregarLead({
+    nombre: nombre, zona: $('#nl_zona').value, origen: $('#nl_origen').value,
+    whatsapp: $('#nl_wa').value.trim() || '11 0000 0000', email: $('#nl_mail').value.trim() || 'sin@mail.com',
+    respuestas: { motivo: 1, capital: 1, timeline: 2, dedicacion: 1, experiencia: 1, necesita: [] }
+  });
+  cerrarModal(); refrescar();
+  toast('✨ Lead creado', nombre + ' entró como Nuevo · completá su perfil al contactarlo');
+  abrirLead(l.id);
+}
+
+/* ═══════════════ command palette ═══════════════ */
+var cmdkSel = 0;
+function abrirCmdk(){ $('#cmdk').classList.add('open'); $('#cmdkInput').value = ''; renderCmdk(''); setTimeout(function(){ $('#cmdkInput').focus(); }, 40); }
+function cerrarCmdk(){ $('#cmdk').classList.remove('open'); }
+function itemsCmdk(q){
+  q = q.toLowerCase();
+  var acciones = [
+    { e: '📊', t: 'Ir al Dashboard', k: 'G D', fn: function(){ ir('dashboard'); } },
+    { e: '🧲', t: 'Ir al Pipeline', k: 'G P', fn: function(){ ir('pipeline'); } },
+    { e: '🎛️', t: 'Ir a Scoring', k: 'G S', fn: function(){ ir('scoring'); } },
+    { e: '🏆', t: 'Ir a Equipo y logros', k: '', fn: function(){ ir('equipo'); } },
+    { e: '＋', t: 'Crear nuevo lead', k: 'N', fn: abrirNuevoLead },
+    { e: '⬇️', t: 'Exportar leads a CSV', k: '', fn: descargarCSV },
+    { e: '🌐', t: 'Abrir la landing (lado cliente)', k: '', fn: function(){ location.href = 'landing.html'; } }
+  ].filter(function(a){ return !q || a.t.toLowerCase().indexOf(q) >= 0; });
+  var leads = q ? CRM.leads().filter(function(l){ return (l.nombre + ' ' + l.zona).toLowerCase().indexOf(q) >= 0; }).slice(0, 6)
+    .map(function(l){ return { e: l.segmento.emoji, t: l.nombre + ' · ' + CRM.etiquetaEtapa(l.etapa) + ' · score ' + l.score, k: '', fn: function(){ abrirLead(l.id); } }; }) : [];
+  return leads.concat(acciones);
+}
+function renderCmdk(q){
+  var items = itemsCmdk(q);
+  cmdkSel = Math.min(cmdkSel, Math.max(0, items.length - 1));
+  $('#cmdkList').innerHTML = items.length ? items.map(function(it, i){
+    return '<div class="cmdk-item' + (i === cmdkSel ? ' sel' : '') + '" data-i="' + i + '"><span class="e">' + it.e + '</span>' + esc(it.t) +
+      (it.k ? '<kbd>' + it.k + '</kbd>' : '') + '</div>';
+  }).join('') : '<div class="empty-col" style="margin:10px">Nada con "' + esc(q) + '" 🤷</div>';
+  $$('.cmdk-item').forEach(function(n){
+    n.onclick = function(){ var it = itemsCmdk($('#cmdkInput').value)[+n.dataset.i]; cerrarCmdk(); it.fn(); };
+  });
+}
+$('#cmdkInput').addEventListener('input', function(){ cmdkSel = 0; renderCmdk(this.value); });
+$('#cmdkInput').addEventListener('keydown', function(e){
+  var items = itemsCmdk(this.value);
+  if (e.key === 'ArrowDown'){ e.preventDefault(); cmdkSel = Math.min(cmdkSel + 1, items.length - 1); renderCmdk(this.value); }
+  else if (e.key === 'ArrowUp'){ e.preventDefault(); cmdkSel = Math.max(cmdkSel - 1, 0); renderCmdk(this.value); }
+  else if (e.key === 'Enter' && items[cmdkSel]){ cerrarCmdk(); items[cmdkSel].fn(); }
+});
+$('#cmdk').addEventListener('click', function(e){ if (e.target.id === 'cmdk') cerrarCmdk(); });
+
+/* ═══════════════ atajos globales ═══════════════ */
+var gPrimida = false, gTimer = null;
+document.addEventListener('keydown', function(e){
+  var enInput = /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); abrirCmdk(); return; }
+  if (e.key === 'Escape'){ cerrarCmdk(); cerrarModal(); cerrarDrawer(); return; }
+  if (enInput) return;
+  if (e.key === '?'){ ir('glosario'); return; }
+  if (e.key.toLowerCase() === 'n'){ abrirNuevoLead(); return; }
+  if (e.key.toLowerCase() === 'g'){ gPrimida = true; clearTimeout(gTimer); gTimer = setTimeout(function(){ gPrimida = false; }, 900); return; }
+  if (gPrimida){
+    var map = { d: 'dashboard', p: 'pipeline', s: 'scoring', l: 'leads', e: 'equipo', c: 'config' };
+    var v = map[e.key.toLowerCase()];
+    if (v) ir(v);
+    gPrimida = false;
+  }
+});
+
+/* ═══════════════ tour de bienvenida ═══════════════ */
+function tourBienvenida(){
+  if (CRM.state().gam.tourVisto) return;
+  abrirModal('<div style="text-align:center"><img src="assets/logo.png" style="height:46px;margin:0 auto 14px">' +
+    '<h3 style="font-size:19px;margin-bottom:8px">¡Bienvenido al CRM de Chisap! 👋</h3>' +
+    '<p style="font-size:13.5px;color:var(--tinta3);margin-bottom:16px">Acá se gestionan los candidatos a franquiciados. Tres cosas para probar ahora:</p>' +
+    '<div style="text-align:left;display:grid;gap:9px;margin-bottom:18px">' +
+    '<div class="paso-sig" style="display:flex;gap:11px;background:var(--fondo);border:1px solid var(--linea);border-radius:11px;padding:11px 13px;font-size:12.5px;color:var(--tinta3)"><b style="color:var(--oro)">1.</b><span><b style="color:var(--tinta)">Arrastrá un lead</b> en el Pipeline — al soltar, el CRM te pide la próxima acción.</span></div>' +
+    '<div class="paso-sig" style="display:flex;gap:11px;background:var(--fondo);border:1px solid var(--linea);border-radius:11px;padding:11px 13px;font-size:12.5px;color:var(--tinta3)"><b style="color:var(--oro)">2.</b><span><b style="color:var(--tinta)">Editá el scoring</b> — subí puntos al capital y mirá la base recalcularse en vivo.</span></div>' +
+    '<div class="paso-sig" style="display:flex;gap:11px;background:var(--fondo);border:1px solid var(--linea);border-radius:11px;padding:11px 13px;font-size:12.5px;color:var(--tinta3)"><b style="color:var(--oro)">3.</b><span><b style="color:var(--tinta)">Llevá uno a Firmado</b> — hay confetti esperándote. 🎉</span></div></div>' +
+    '<button class="btn btn-oro" onclick="CRM.state().gam.tourVisto=1;CRM.save();cerrarModal()">¡Empecemos! →</button></div>');
+}
+
+/* ═══════════════ refresco ═══════════════ */
+function refrescar(refrescarVista){
+  if (refrescarVista !== false) VISTAS[vistaActual].fn($('#v-' + vistaActual));
+  renderGam();
+}
+window.addEventListener('crm:cambio', function(){ renderGam(); });
+
+/* mobile: botón hamburguesa simple */
+if (matchMedia('(max-width:960px)').matches){
+  var burger = document.createElement('button');
+  burger.className = 'btn btn-ghost btn-sm';
+  burger.textContent = '☰ Menú';
+  burger.style.cssText = 'position:fixed;bottom:18px;left:14px;z-index:60';
+  burger.onclick = function(){ $('#sidebar').classList.toggle('open'); };
+  document.body.appendChild(burger);
+}
+
+/* arranque */
+var hash = (location.hash || '').replace('#/', '');
+ir(VISTAS[hash] ? hash : 'dashboard');
+tourBienvenida();
+</script>
+</body>
+</html>
