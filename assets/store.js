@@ -170,7 +170,7 @@
         id: 'L' + (1000 + i),
         nombre: n[0], zona: n[1],
         whatsapp: '11 ' + (4000 + Math.floor(rand() * 5999)) + ' ' + (1000 + Math.floor(rand() * 8999)),
-        email: n[0].toLowerCase().replace(/[^a-z]+/g, '.').replace(/\.$/, '') + '@gmail.com',
+        email: n[0].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]+/g, '.').replace(/\.$/, '') + '@gmail.com',
         origen: ORIGENES[Math.floor(rand() * ORIGENES.length)],
         respuestas: resp,
         etapa: etapa,
@@ -209,7 +209,13 @@
       var raw = global.localStorage.getItem(LS_KEY);
       state = raw ? JSON.parse(raw) : defaults();
     } catch (e) { state = defaults(); }
-    if (!state || !state.leads) state = defaults();
+    if (!state || !Array.isArray(state.leads) || !state.leads.length) state = defaults();
+    /* migración defensiva: estados de versiones viejas completan claves faltantes */
+    var base = defaults();
+    ['reglas', 'config', 'gam'].forEach(function (k) {
+      if (!state[k]) state[k] = base[k];
+      else for (var kk in base[k]) if (state[k][kk] == null) state[k][kk] = base[k][kk];
+    });
     return state;
   }
   function save() {
@@ -248,7 +254,7 @@
     var desde = l.etapa; l.etapa = etapa; l.ultimaActividad = Date.now();
     var nombreEtapa = etapa === 'perdido' ? 'Perdido' : (ETAPAS.find(function (e) { return e.id === etapa; }) || {}).nombre;
     l.actividad.push({ t: Date.now(), tipo: etapa === 'firmado' ? 'firma' : 'movimiento', texto: 'Pasó de ' + etiquetaEtapa(desde) + ' a ' + nombreEtapa });
-    if (etapa === 'firmado') sumarXP(100, 'primera_firma');
+    if (etapa === 'firmado' && !l.xpFirmaDado) { l.xpFirmaDado = true; sumarXP(100, 'primera_firma'); }
     save(); return conScore(l);
   }
   function etiquetaEtapa(id) {
@@ -287,11 +293,18 @@
   function marcarSeccion(id) {
     if (state.gam.seccionesVistas.indexOf(id) < 0) {
       state.gam.seccionesVistas.push(id);
-      if (state.gam.seccionesVistas.length >= 5) sumarXP(0, 'explorador');
+      if (state.gam.seccionesVistas.length >= 7) sumarXP(0, 'explorador');
       save();
     }
   }
 
+  /* logros que dependen del estado global */
+  function evaluarLogros() {
+    var m = metricas();
+    if (m.firmadosMes >= state.config.metaMensualFirmas) sumarXP(0, 'meta_mes');
+    var activos = state.leads.filter(function (l) { return l.etapa !== 'firmado' && l.etapa !== 'perdido'; });
+    if (activos.length && m.fueraSLA === 0) sumarXP(0, 'cero_frios');
+  }
   /* métricas para dashboard */
   function metricas() {
     var ls = leads(), hoy = new Date(), mesActual = hoy.getFullYear() + '-' + (hoy.getMonth() + 1);
@@ -340,19 +353,34 @@
   }
 
   /* export CSV del pipeline */
+  function csvCell(v) {
+    v = String(v == null ? '' : v);
+    return /[;"\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  }
   function exportCSV() {
     var s = 'ID;Nombre;Zona;Origen;Etapa;Score;Segmento;Capital;Timeline;Creado;Asignado\r\n';
     leads().forEach(function (l) {
       s += [l.id, l.nombre, l.zona, l.origen, etiquetaEtapa(l.etapa), l.score, l.segmento.nombre,
-            PREGUNTAS.capital.opciones[l.respuestas.capital].t,
-            PREGUNTAS.timeline.opciones[l.respuestas.timeline].t,
+            (PREGUNTAS.capital.opciones[l.respuestas.capital] || {}).t || '',
+            (PREGUNTAS.timeline.opciones[l.respuestas.timeline] || {}).t || '',
             new Date(l.creadoEl).toISOString().slice(0, 10),
-            (EQUIPO.find(function (e) { return e.id === l.asignado; }) || {}).nombre || ''].join(';') + '\r\n';
+            (EQUIPO.find(function (e) { return e.id === l.asignado; }) || {}).nombre || ''].map(csvCell).join(';') + '\r\n';
     });
     return s;
   }
 
   load();
+
+  /* Sincronización entre pestañas: si la landing escribe un lead en otra pestaña,
+     esta recarga el estado antes de pisarlo con un save propio. */
+  try {
+    global.addEventListener('storage', function (e) {
+      if (e && e.key === LS_KEY) {
+        load();
+        try { global.dispatchEvent(new CustomEvent('crm:cambio')); } catch (err) {}
+      }
+    });
+  } catch (e) {}
 
   global.CRM = {
     PREGUNTAS: PREGUNTAS, NECESITA: NECESITA, ZONAS: ZONAS, ORIGENES: ORIGENES,
@@ -363,7 +391,7 @@
     agregarActividad: agregarActividad, agregarNota: agregarNota,
     calcularScore: calcularScore, segmento: segmento, setReglas: setReglas,
     diasSinActividad: diasSinActividad, enSLA: enSLA, etiquetaEtapa: etiquetaEtapa,
-    metricas: metricas, exportCSV: exportCSV,
+    metricas: metricas, exportCSV: exportCSV, evaluarLogros: function(){ evaluarLogros(); save(); },
     nivel: nivel, sumarXP: function (x, l) { sumarXP(x, l); save(); }, marcarSeccion: marcarSeccion,
     save: save, reset: reset
   };

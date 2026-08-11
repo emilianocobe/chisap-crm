@@ -91,7 +91,9 @@ kbd.k{font-size:10.5px;background:var(--fondo);border:1px solid var(--linea);bor
 .filtros select,.filtros input{padding:8px 11px;font-size:12.5px;border-radius:9px}
 .tag-nuevo{position:absolute;top:-7px;left:12px;background:var(--verde);color:#06371b;font-size:9px;
   font-weight:900;padding:2px 8px;border-radius:99px;letter-spacing:.06em}
-@media print{.sidebar,#dropZones,#toasts{display:none!important}.app{grid-template-columns:1fr}}
+.burger-btn{display:none;position:fixed;bottom:18px;left:14px;z-index:60}
+@media(max-width:960px){.burger-btn{display:inline-flex}}
+@media print{.sidebar,#dropZones,#toasts,.burger-btn{display:none!important}.app{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -228,6 +230,7 @@ function ir(v){
   VISTAS[v].fn(el);
   CRM.marcarSeccion(v);
   renderGam();
+  chequearLogro();
   $('#sidebar').classList.remove('open');
 }
 $$('.nav-item[data-v]').forEach(function(n){ n.onclick = function(){ ir(n.dataset.v); }; });
@@ -329,7 +332,8 @@ function rPipeline(el){
     '</div><div class="kanban" id="kanban">';
   CRM.ETAPAS.forEach(function(e){
     var ls = leads.filter(function(l){ return l.etapa === e.id; })
-      .sort(function(a, b){ return b.score - a.score; });
+      /* los leads creados en esta demo se fijan arriba (la landing promete verlos primero) */
+      .sort(function(a, b){ return (b.nuevoDemo ? 1 : 0) - (a.nuevoDemo ? 1 : 0) || b.score - a.score; });
     html += '<div class="col" data-etapa="' + e.id + '">' +
       '<div class="col-h"><span class="dot" style="background:' + e.color + '"></span><b>' + e.emoji + ' ' + e.nombre + '</b><span class="cnt">' + ls.length + '</span></div>' +
       '<div class="col-body">' +
@@ -362,8 +366,7 @@ function activarDnD(){
     c.addEventListener('dragstart', function(e){
       dragId = c.dataset.id; c.classList.add('dragging');
       $('#dropZones').classList.add('show');
-      try { e.dataTransfer.setData('text/plain', dragId); } catch (err) {}
-      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', dragId); e.dataTransfer.effectAllowed = 'move'; } catch (err) {}
     });
     c.addEventListener('dragend', function(){
       c.classList.remove('dragging'); $('#dropZones').classList.remove('show');
@@ -394,6 +397,7 @@ function moverCon(id, etapa){
   if (etapa === 'perdido'){ modalPerdido(id, desde); return; }
   CRM.moverLead(id, etapa);
   refrescar();
+  if (leadAbierto === id) abrirLead(id);
   if (etapa === 'firmado'){
     confeti(90);
     toast('🏆 ¡' + l.nombre + ' FIRMÓ!', 'Una franquicia más en la red. +100 XP', 'Deshacer', function(){ CRM.moverLead(id, desde); refrescar(); });
@@ -427,7 +431,11 @@ function confirmarPerdido(id, desde, motivo){
   CRM.moverLead(id, 'perdido');
   CRM.state().leads.find(function(x){ return x.id === id; }).motivoPerdida = motivo;
   CRM.save(); refrescar();
-  toast('Lead marcado como perdido', motivo, 'Deshacer', function(){ CRM.moverLead(id, desde); refrescar(); });
+  toast('Lead marcado como perdido', motivo, 'Deshacer', function(){
+    var lx = CRM.state().leads.find(function(x){ return x.id === id; });
+    if (lx) delete lx.motivoPerdida;
+    CRM.moverLead(id, desde); refrescar();
+  });
 }
 function modalProximaAccion(id){
   var l = CRM.lead(id);
@@ -464,7 +472,12 @@ function rLeads(el){
     }).join('') + '</tbody></table>' +
     (ls.length ? '' : '<div class="empty-col" style="margin:16px 0">🔍 Nada por acá con esa búsqueda. Probá con otro término.</div>') + '</div>';
   var inp = $('#buscaLeads');
-  inp.oninput = function(){ el.dataset.q = inp.value; rLeads(el); var i2 = $('#buscaLeads'); i2.focus(); i2.setSelectionRange(i2.value.length, i2.value.length); };
+  inp.oninput = function(){
+    var pos = inp.selectionStart;
+    el.dataset.q = inp.value; rLeads(el);
+    var i2 = $('#buscaLeads'); i2.focus();
+    try { i2.setSelectionRange(pos, pos); } catch (e) {}
+  };
 }
 function descargarCSV(){
   var blob = new Blob(['﻿' + CRM.exportCSV()], { type: 'text/csv;charset=utf-8' });
@@ -502,9 +515,9 @@ function renderEditor(){
     '<div class="card" style="margin-top:14px"><b style="font-family:var(--disp);font-size:14px">🌡️ Umbrales de temperatura</b>' +
     '<p style="font-size:12px;color:var(--tinta3);margin:4px 0 14px">Definen cuándo un lead es 🔥 caliente, 🌤️ tibio o 🧊 frío.</p>' +
     '<div class="bar"><div class="tp"><b>🔥 Caliente desde</b><span id="lblCal">' + reglasTemp.umbralCaliente + ' puntos</span></div>' +
-    '<div class="rango"><input type="range" min="50" max="95" value="' + reglasTemp.umbralCaliente + '" oninput="cambiarUmbral(\'umbralCaliente\', this.value)"></div></div>' +
+    '<div class="rango"><input type="range" id="rngCal" min="50" max="95" value="' + reglasTemp.umbralCaliente + '" oninput="cambiarUmbral(\'umbralCaliente\', this.value)"></div></div>' +
     '<div class="bar"><div class="tp"><b>🌤️ Tibio desde</b><span id="lblTib">' + reglasTemp.umbralTibio + ' puntos</span></div>' +
-    '<div class="rango"><input type="range" min="20" max="70" value="' + reglasTemp.umbralTibio + '" oninput="cambiarUmbral(\'umbralTibio\', this.value)"></div></div>' +
+    '<div class="rango"><input type="range" id="rngTib" min="20" max="70" value="' + reglasTemp.umbralTibio + '" oninput="cambiarUmbral(\'umbralTibio\', this.value)"></div></div>' +
     '</div>' +
     '<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">' +
     '<button class="btn btn-oro" onclick="guardarReglas()">💾 Guardar y recalcular todo</button>' +
@@ -526,6 +539,8 @@ function cambiarUmbral(k, v){
   if (reglasTemp.umbralTibio >= reglasTemp.umbralCaliente) reglasTemp.umbralTibio = reglasTemp.umbralCaliente - 5;
   $('#lblCal').textContent = reglasTemp.umbralCaliente + ' puntos';
   $('#lblTib').textContent = reglasTemp.umbralTibio + ' puntos';
+  if ($('#rngCal')) $('#rngCal').value = reglasTemp.umbralCaliente;
+  if ($('#rngTib')) $('#rngTib').value = reglasTemp.umbralTibio;
   renderPreview();
 }
 function renderPreview(){
@@ -538,14 +553,15 @@ function renderPreview(){
     var s = CRM.segmento(nuevo, reglasTemp); seg[s.id]++;
   });
   var ejemplo = CRM.leads()[0];
+  if (!ejemplo){ $('#scPreview').innerHTML = '<div class="card" style="font-size:13px;color:var(--tinta3)">Sin leads para previsualizar. Reiniciá la demo desde ⚙️ Configuración.</div>'; return; }
   var det = CRM.calcularScore(ejemplo.respuestas, reglasTemp);
   var segEj = CRM.segmento(det.score, reglasTemp);
   $('#scPreview').innerHTML =
     '<div class="card" style="border-color:rgba(242,183,5,.4)"><b style="font-family:var(--disp);font-size:14px">⚡ Impacto en vivo</b>' +
     '<p style="font-size:12px;color:var(--tinta3);margin:4px 0 12px">Así quedaría la base con estas reglas:</p>' +
-    '<div class="bar"><div class="tp"><b>🔥 Calientes</b><span>' + seg.caliente + ' leads</span></div><div class="tk"><div class="fl verde" style="width:' + (100 * seg.caliente / ls.length) + '%"></div></div></div>' +
-    '<div class="bar"><div class="tp"><b>🌤️ Tibios</b><span>' + seg.tibio + ' leads</span></div><div class="tk"><div class="fl oro" style="width:' + (100 * seg.tibio / ls.length) + '%"></div></div></div>' +
-    '<div class="bar"><div class="tp"><b>🧊 Fríos</b><span>' + seg.frio + ' leads</span></div><div class="tk"><div class="fl azul" style="width:' + (100 * seg.frio / ls.length) + '%"></div></div></div>' +
+    '<div class="bar"><div class="tp"><b>🔥 Calientes</b><span>' + seg.caliente + ' leads</span></div><div class="tk"><div class="fl verde" style="width:' + (100 * seg.caliente / (ls.length || 1)) + '%"></div></div></div>' +
+    '<div class="bar"><div class="tp"><b>🌤️ Tibios</b><span>' + seg.tibio + ' leads</span></div><div class="tk"><div class="fl oro" style="width:' + (100 * seg.tibio / (ls.length || 1)) + '%"></div></div></div>' +
+    '<div class="bar"><div class="tp"><b>🧊 Fríos</b><span>' + seg.frio + ' leads</span></div><div class="tk"><div class="fl azul" style="width:' + (100 * seg.frio / (ls.length || 1)) + '%"></div></div></div>' +
     '<p style="font-size:11.5px;color:var(--oro);margin-top:8px">' + (cambios ? '✏️ ' + cambios + ' leads cambiarían de score' : 'Sin cambios sobre el score actual') + '</p></div>' +
     '<div class="card" style="margin-top:13px"><b style="font-family:var(--disp);font-size:13px">🧪 Probador: ' + esc(ejemplo.nombre) + '</b>' +
     '<div style="display:flex;align-items:center;gap:12px;margin:10px 0 12px">' +
@@ -790,7 +806,8 @@ function renderCmdk(q){
     return '<div class="cmdk-item' + (i === cmdkSel ? ' sel' : '') + '" data-i="' + i + '"><span class="e">' + it.e + '</span>' + esc(it.t) +
       (it.k ? '<kbd>' + it.k + '</kbd>' : '') + '</div>';
   }).join('') : '<div class="empty-col" style="margin:10px">Nada con "' + esc(q) + '" 🤷</div>';
-  $$('.cmdk-item').forEach(function(n){
+  /* acotado a la lista del palette: los modales usan .cmdk-item solo como estilo */
+  $$('.cmdk-item', $('#cmdkList')).forEach(function(n){
     n.onclick = function(){ var it = itemsCmdk($('#cmdkInput').value)[+n.dataset.i]; cerrarCmdk(); it.fn(); };
   });
 }
@@ -808,7 +825,12 @@ var gPrimida = false, gTimer = null;
 document.addEventListener('keydown', function(e){
   var enInput = /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); abrirCmdk(); return; }
-  if (e.key === 'Escape'){ cerrarCmdk(); cerrarModal(); cerrarDrawer(); return; }
+  if (e.key === 'Escape'){
+    if ($('#cmdk').classList.contains('open')) cerrarCmdk();
+    else if ($('#modal').classList.contains('open')) cerrarModal();
+    else cerrarDrawer();
+    return;
+  }
   if (enInput) return;
   if (e.key === '?'){ ir('glosario'); return; }
   if (e.key.toLowerCase() === 'n'){ abrirNuevoLead(); return; }
@@ -836,20 +858,30 @@ function tourBienvenida(){
 
 /* ═══════════════ refresco ═══════════════ */
 function refrescar(refrescarVista){
+  CRM.evaluarLogros();
   if (refrescarVista !== false) VISTAS[vistaActual].fn($('#v-' + vistaActual));
   renderGam();
+  chequearLogro();
 }
 window.addEventListener('crm:cambio', function(){ renderGam(); });
+/* otra pestaña escribió (p.ej. el wizard de la landing): refrescar la vista */
+window.addEventListener('storage', function(e){ if (e && e.key === 'chisap_crm_v1') refrescar(); });
 
 /* mobile: botón hamburguesa simple */
-if (matchMedia('(max-width:960px)').matches){
+(function(){
+  /* siempre en el DOM: el CSS decide cuándo mostrarlo (rotaciones, resize) */
   var burger = document.createElement('button');
-  burger.className = 'btn btn-ghost btn-sm';
+  burger.className = 'btn btn-ghost btn-sm burger-btn';
   burger.textContent = '☰ Menú';
-  burger.style.cssText = 'position:fixed;bottom:18px;left:14px;z-index:60';
   burger.onclick = function(){ $('#sidebar').classList.toggle('open'); };
   document.body.appendChild(burger);
-}
+})();
+
+/* botón atrás del navegador */
+window.addEventListener('hashchange', function(){
+  var h = (location.hash || '').replace('#/', '');
+  if (VISTAS[h] && h !== vistaActual) ir(h);
+});
 
 /* arranque */
 var hash = (location.hash || '').replace('#/', '');

@@ -161,8 +161,6 @@
   </div>
 </div>
 
-<div id="toasts"></div>
-
 <script src="assets/store.js"></script>
 <script>
 /* ═════════ ticker social proof ═════════ */
@@ -180,6 +178,7 @@ var io = new IntersectionObserver(function(es){es.forEach(function(e){
 document.querySelectorAll('.rv').forEach(function(x){io.observe(x)});
 
 /* ═════════ WIZARD ═════════ */
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 var P = CRM.PREGUNTAS;
 var PASOS = [
   { key:'zona', tipo:'select', kick:'Arranquemos fácil', titulo:'¿En qué zona te gustaría abrir tu Chisap?',
@@ -199,8 +198,10 @@ var PASOS = [
 ];
 var idx = 0, R = { necesita: [] };
 
+var wizTerminado = false;
 function abrirWizard(){
-  idx = 0; R = { necesita: [] };
+  /* si cerró a mitad de camino, retoma donde estaba; solo resetea tras terminar */
+  if (wizTerminado){ idx = 0; R = { necesita: [] }; wizTerminado = false; }
   document.getElementById('wizardOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   render();
@@ -234,9 +235,9 @@ function render(){
       return '<div class="opt'+(sel?' sel':'')+'" tabindex="0" role="button" onclick="toggleMulti('+i+')" onkeydown="if(event.key===\'Enter\')this.click()"><span class="em">'+['📊','🗣️','🏪','📄'][i]+'</span><span>'+o+'</span><span class="ck"></span></div>';
     }).join('') + '</div><div class="micro-hint">✔️ Elegí todas las que apliquen — cada una suma a tu perfil</div>';
   } else if (p.tipo === 'form'){
-    h += '<div class="campo"><label>Nombre y apellido</label><input id="f_nombre" autocomplete="name" placeholder="Ej: Diego Méndez" value="'+(R.nombre||'')+'"></div>' +
-         '<div class="campo"><label>WhatsApp</label><input id="f_wa" inputmode="tel" autocomplete="tel" placeholder="Ej: 11 5555 4444" value="'+(R.whatsapp||'')+'"></div>' +
-         '<div class="campo"><label>Email</label><input id="f_mail" inputmode="email" autocomplete="email" placeholder="Ej: diego@gmail.com" value="'+(R.email||'')+'"></div>' +
+    h += '<div class="campo"><label>Nombre y apellido</label><input id="f_nombre" autocomplete="name" placeholder="Ej: Diego Méndez" value="'+esc(R.nombre||'')+'"></div>' +
+         '<div class="campo"><label>WhatsApp</label><input id="f_wa" inputmode="tel" autocomplete="tel" placeholder="Ej: 11 5555 4444" value="'+esc(R.whatsapp||'')+'"></div>' +
+         '<div class="campo"><label>Email</label><input id="f_mail" inputmode="email" autocomplete="email" placeholder="Ej: diego@gmail.com" value="'+esc(R.email||'')+'"></div>' +
          '<label style="display:flex;gap:9px;font-size:12.5px;color:var(--tinta3);margin-top:6px;align-items:flex-start;cursor:pointer">' +
          '<input type="checkbox" id="f_ok" style="width:auto;margin-top:2px;accent-color:var(--oro)" '+(R.consent?'checked':'')+'>' +
          'Acepto que me contacten por WhatsApp o email sobre la franquicia. Sin spam, prometido.</label>';
@@ -247,20 +248,23 @@ function render(){
   b.innerHTML = h;
   if (p.tipo === 'form') setTimeout(function(){var e=document.getElementById('f_nombre'); if(e) e.focus();}, 80);
 }
-function elegirZona(z){ R.zona = z; render(); setTimeout(siguiente, 240); }
-function elegir(k, i){ R[k] = i; render(); setTimeout(siguiente, 240); } /* autoavance */
+var autoTimer = null;
+function autoSig(){ clearTimeout(autoTimer); autoTimer = setTimeout(function(){ autoTimer = null; siguiente(); }, 240); }
+function elegirZona(z){ R.zona = z; render(); autoSig(); }
+function elegir(k, i){ R[k] = i; render(); autoSig(); } /* autoavance con timer único */
 function toggleMulti(i){
   var p = R.necesita.indexOf(i);
   if (p >= 0) R.necesita.splice(p, 1); else R.necesita.push(i);
   render();
 }
-function atras(){ if (idx > 0){ idx--; render(); } }
+function atras(){ clearTimeout(autoTimer); autoTimer = null; if (idx > 0){ idx--; render(); } }
 function flash(msg){
   var btn = document.getElementById('btnSig'), orig = btn.textContent;
   btn.textContent = msg; btn.style.background = 'var(--rojo-vivo)'; btn.style.color = '#fff';
   setTimeout(function(){ btn.textContent = orig; btn.style.background=''; btn.style.color=''; }, 1400);
 }
 function siguiente(){
+  clearTimeout(autoTimer); autoTimer = null;
   var p = PASOS[idx];
   if (p.tipo === 'select' && !R.zona) return flash('Elegí tu zona');
   if (p.tipo === 'opts' && R[p.key] == null) return flash('Elegí una opción');
@@ -283,6 +287,7 @@ function siguiente(){
 }
 
 function terminar(){
+  wizTerminado = true;
   document.getElementById('progFill').style.width = '100%';
   document.getElementById('progLbl').textContent = '100%';
   var respuestas = { motivo: R.motivo, capital: R.capital, timeline: R.timeline,
@@ -301,11 +306,11 @@ function terminar(){
     '<defs><linearGradient id="gsc"><stop offset="0" stop-color="#F2B705"/><stop offset="1" stop-color="#FFD54A"/></linearGradient></defs></svg>' +
     '<div class="lbl"><b id="scNum">0</b><small>tu perfil</small></div></div>' +
     '<span class="badge-perfil" style="background:'+seg.color+'22;color:'+seg.color+';border:1px solid '+seg.color+'55">'+perfil.e+' '+perfil.t+'</span>' +
-    '<div style="font-family:var(--disp);font-weight:800;font-size:21px">¡Listo, '+R.nombre.split(' ')[0]+'!</div>' +
+    '<div style="font-family:var(--disp);font-weight:800;font-size:21px">¡Listo, '+esc(R.nombre.split(' ')[0])+'!</div>' +
     '<p style="color:var(--tinta3);font-size:14px;max-width:420px;margin:8px auto 0">'+perfil.msg+'</p>' +
     '<div class="pasos-sig">' +
     '<div class="paso-sig"><span class="n">1</span><span><b>En menos de 24 hs hábiles</b> te escribe tu asesor por WhatsApp.</span></div>' +
-    '<div class="paso-sig"><span class="n">2</span><span>Te manda <b>la proyección de tu zona</b>' + (R.necesita.length ? ' y ' + (R.necesita.length > 1 ? 'lo que pediste ver' : 'lo que pediste ver') : '') + '.</span></div>' +
+    '<div class="paso-sig"><span class="n">2</span><span>Te manda <b>la proyección de tu zona</b>' + (R.necesita.length ? ' y ' + (R.necesita.length > 1 ? 'todo lo que pediste ver' : 'lo que pediste ver') : '') + '.</span></div>' +
     '<div class="paso-sig"><span class="n">3</span><span>Si te cierra, coordinamos <b>una visita a un local activo</b>.</span></div>' +
     '</div>' +
     '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px">' +
@@ -313,8 +318,18 @@ function terminar(){
     '<button class="btn btn-ghost btn-sm" onclick="cerrarWizard()">Cerrar</button></div>' +
     '<p style="font-size:11px;color:var(--tinta3);margin-top:16px">🎬 <b style="color:var(--oro)">Demo:</b> tu lead ya entró al CRM — abrí el <a href="app.html" style="color:var(--oro);text-decoration:underline">lado del colaborador</a> y lo vas a ver primero en el pipeline.</p>' +
     '</div>';
-  var n = 0; var t = setInterval(function(){ n++; document.getElementById('scNum').textContent = n; if (n >= sc) clearInterval(t); }, 16);
-  setTimeout(function(){ var r = document.getElementById('ringSc'); r.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.2,.75,.25,1)'; r.style.strokeDashoffset = off; }, 120);
+  var n = 0; document.getElementById('scNum').textContent = '0';
+  var t = setInterval(function(){
+    var elx = document.getElementById('scNum');
+    if (!elx || n >= sc){ clearInterval(t); return; }   // el wizard pudo cerrarse a mitad de animación
+    n++; elx.textContent = n;
+  }, 16);
+  setTimeout(function(){
+    var r = document.getElementById('ringSc');
+    if (!r) return;   // el wizard pudo cerrarse antes de que arranque la animación
+    r.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.2,.75,.25,1)';
+    r.style.strokeDashoffset = off;
+  }, 120);
   confeti(seg.id === 'caliente' ? 60 : 24);
 }
 /* celebración suave */
