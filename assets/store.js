@@ -169,8 +169,8 @@
       var lead = {
         id: 'L' + (1000 + i),
         nombre: n[0], zona: n[1],
-        whatsapp: '11 ' + (4000 + Math.floor(rand() * 5999)) + ' ' + (1000 + Math.floor(rand() * 8999)),
-        email: n[0].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]+/g, '.').replace(/\.$/, '') + '@gmail.com',
+        whatsapp: '11 5555 ' + (100 + Math.floor(rand() * 899)) + '' + Math.floor(rand() * 10),  /* rango ficticio */
+        email: n[0].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]+/g, '.').replace(/\.$/, '') + '@example.com',
         origen: ORIGENES[Math.floor(rand() * ORIGENES.length)],
         respuestas: resp,
         etapa: etapa,
