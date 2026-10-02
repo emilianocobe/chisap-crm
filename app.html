@@ -171,7 +171,7 @@ function $$(s, c){ return Array.prototype.slice.call((c || document).querySelect
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function fechaCorta(t){ var d = new Date(t); return d.getDate() + ' ' + ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.getMonth()]; }
 function hace(t){
-  var d = Math.floor((Date.now() - t) / 86400000);
+  var d = Math.max(0, Math.floor((Date.now() - t) / 86400000));
   return d === 0 ? 'hoy' : d === 1 ? 'ayer' : 'hace ' + d + ' días';
 }
 var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
