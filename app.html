@@ -762,7 +762,7 @@ function abrirNuevoLead(){
     '<div class="campo"><label>Zona</label><select id="nl_zona">' + CRM.ZONAS.map(function(z){ return '<option>' + z + '</option>'; }).join('') + '</select></div>' +
     '<div class="campo"><label>Origen</label><select id="nl_origen">' + CRM.ORIGENES.map(function(o){ return '<option>' + o + '</option>'; }).join('') + '</select></div>' +
     '<div class="g c2"><div class="campo"><label>WhatsApp</label><input id="nl_wa" placeholder="11 5555 4444"></div>' +
-    '<div class="campo"><label>Email</label><input id="nl_mail" placeholder="lead@mail.com"></div></div>' +
+    '<div class="campo"><label>Email</label><input id="nl_mail" placeholder="lead@example.com"></div></div>' +
     '<div style="display:flex;gap:10px;margin-top:6px"><button class="btn btn-oro" onclick="crearLeadManual()">Crear lead</button>' +
     '<button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button></div>');
   setTimeout(function(){ $('#nl_nombre').focus(); }, 60);
