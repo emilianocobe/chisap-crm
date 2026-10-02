@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chisap CRM · Tutoriales en video</title>
+<meta name="description" content="Los tutoriales en video del CRM de franquicias de Chisap Fiesta: el recorrido del candidato y el backoffice completo, explicados paso a paso.">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="assets/brand.css">
+<style>
+.w{max-width:1120px;margin:0 auto;padding:0 24px}
+.hero{position:relative;overflow:hidden;padding:72px 0 54px;text-align:center;
+  background:radial-gradient(1000px 560px at 50% -14%,rgba(209,40,27,.5),transparent 62%),var(--fondo)}
+.hero .wm{position:absolute;font-family:var(--disp);font-weight:900;color:rgba(255,255,255,.028);
+  font-size:clamp(100px,18vw,260px);top:48%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none}
+.hero h1{font-size:clamp(32px,6vw,62px);font-weight:900;margin:16px 0 10px;letter-spacing:-.04em;position:relative;z-index:2}
+.hero h1 em{font-style:normal;color:var(--oro)}
+.hero p{position:relative;z-index:2;color:var(--tinta3);font-size:clamp(14.5px,2vw,17.5px);max-width:620px;margin:0 auto}
+.grilla{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:40px 0 20px}
+@media(max-width:980px){.grilla{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.grilla{grid-template-columns:1fr}}
+.vcard{background:var(--sup);border:1px solid var(--linea);border-radius:18px;overflow:hidden;transition:var(--t);display:flex;flex-direction:column}
+.vcard:hover{transform:translateY(-4px);border-color:rgba(242,183,5,.5)}
+.vcard video{width:100%;aspect-ratio:16/9;display:block;background:#000}
+.vcard .cuerpo{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.vcard .num{font-family:var(--disp);font-weight:800;font-size:10.5px;letter-spacing:.18em;color:var(--oro)}
+.vcard h3{font-size:16px;font-weight:800;line-height:1.25}
+.vcard p{font-size:12.5px;color:var(--tinta3);flex:1}
+.vcard .dur{font-size:11px;color:var(--tinta3);font-variant-numeric:tabular-nums}
+.lado-tag{display:inline-flex;align-self:flex-start;font-size:10px;font-weight:800;letter-spacing:.08em;padding:3px 10px;border-radius:99px;margin-bottom:2px}
+.lado-cli{background:rgba(242,183,5,.14);color:var(--oro-claro);border:1px solid rgba(242,183,5,.4)}
+.lado-ope{background:rgba(123,149,255,.13);color:var(--azul);border:1px solid rgba(123,149,255,.4)}
+.lado-mix{background:rgba(37,211,102,.12);color:var(--verde);border:1px solid rgba(37,211,102,.4)}
+.pendiente{display:grid;place-items:center;aspect-ratio:16/9;background:repeating-linear-gradient(45deg,#15151B,#15151B 12px,#17171E 12px,#17171E 24px);color:var(--tinta3);font-size:12px;font-weight:700;letter-spacing:.1em}
+.pie{background:#0A0A0E;border-top:1px solid var(--linea);padding:30px 0;color:var(--tinta3);font-size:12.5px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wm">VIDEOS</div>
+  <div class="w">
+    <img src="assets/logo.png" alt="Chisap Fiesta" style="height:50px;margin:0 auto 16px;position:relative;z-index:2">
+    <span class="pill oro" style="position:relative;z-index:2">🎬 Tutoriales en video · 9 capítulos</span>
+    <h1>El CRM, <em>explicado completo.</em></h1>
+    <p>El recorrido del candidato a franquiciado y el backoffice del equipo, paso a paso. Pantallas reales del sistema, con locución. Cada video se puede ver acá mismo o a pantalla completa.</p>
+  </div>
+</header>
+
+<main class="w">
+  <div class="grilla" id="grilla"><!-- las tarjetas se generan abajo --></div>
+</main>
+
+<footer class="pie">
+  <div class="w" style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center">
+    <span><b style="color:#fff">Chisap CRM</b> · tutoriales de la demo</span>
+    <span><a href="index.html" style="color:var(--oro)">← Volver al hub de la demo</a></span>
+  </div>
+</footer>
+
+<script>
+var VIDEOS = [
+  { n:"00", archivo:"tutoriales/00-demo-dos-minutos.mp4",      lado:"mix", titulo:"La demo en dos minutos",                     desc:"Qué es el sistema: los dos lados y el flujo completo del anuncio a la firma.", dur:"" },
+  { n:"01", archivo:"tutoriales/01-recorrido-franquiciado.mp4", lado:"cli", titulo:"El recorrido del franquiciado",             desc:"La landing y el wizard vividos como candidato, hasta el score y los próximos pasos.", dur:"" },
+  { n:"02", archivo:"tutoriales/02-dashboard.mp4",              lado:"ope", titulo:"El tablero: leer el negocio de un vistazo", desc:"KPIs, meta del mes, embudo, serie semanal, temperatura y leads que se enfrían.", dur:"" },
+  { n:"03", archivo:"tutoriales/03-pipeline.mp4",               lado:"ope", titulo:"El pipeline: gestionar leads día a día",    desc:"El kanban, las tarjetas, mover leads, la próxima acción, Firmado y Perdido.", dur:"" },
+  { n:"04", archivo:"tutoriales/04-ficha-del-lead.mp4",         lado:"ope", titulo:"La ficha del lead",                         desc:"Desglose del score, respuestas del wizard, contacto, notas y línea de tiempo.", dur:"" },
+  { n:"05", archivo:"tutoriales/05-scoring.mp4",                lado:"ope", titulo:"El scoring es tuyo: editarlo sin miedo",    desc:"Puntos por respuesta, umbrales, impacto en vivo y recálculo instantáneo.", dur:"" },
+  { n:"06", archivo:"tutoriales/06-leads-tabla-export.mp4",     lado:"ope", titulo:"Leads: buscar, cargar y exportar",          desc:"La tabla con búsqueda, el alta manual y el export CSV.", dur:"" },
+  { n:"07", archivo:"tutoriales/07-equipo-y-logros.mp4",        lado:"ope", titulo:"Equipo, logros y ritmo de trabajo",         desc:"XP, niveles, logros, racha y el ranking que premia la actividad.", dur:"" },
+  { n:"08", archivo:"tutoriales/08-configuracion-atajos.mp4",   lado:"ope", titulo:"Configuración, atajos y ayuda",             desc:"Meta y SLA, reinicio de la demo, Ctrl K, atajos de teclado y glosario.", dur:"" }
+];
+var LADOS = { cli:["lado-cli","🙋 Lado del candidato"], ope:["lado-ope","🎧 Lado del operario"], mix:["lado-mix","🎬 Visión general"] };
+var g = document.getElementById("grilla");
+VIDEOS.forEach(function(v){
+  var card = document.createElement("article"); card.className = "vcard";
+  var L = LADOS[v.lado];
+  card.innerHTML =
+    '<video controls preload="metadata" src="' + v.archivo + '" poster=""></video>' +
+    '<div class="cuerpo"><span class="lado-tag ' + L[0] + '">' + L[1] + '</span>' +
+    '<span class="num">VIDEO ' + v.n + (v.dur ? ' · ' + v.dur : '') + '</span>' +
+    '<h3>' + v.titulo + '</h3><p>' + v.desc + '</p></div>';
+  var vid = card.querySelector("video");
+  vid.addEventListener("error", function(){
+    var ph = document.createElement("div"); ph.className = "pendiente"; ph.textContent = "PRÓXIMAMENTE";
+    vid.replaceWith(ph);
+  });
+  vid.addEventListener("loadedmetadata", function(){
+    var s = Math.round(vid.duration), m = Math.floor(s/60);
+    card.querySelector(".num").textContent = "VIDEO " + v.n + " · " + m + ":" + String(s%60).padStart(2,"0");
+  });
+  vid.addEventListener("play", function(){
+    document.querySelectorAll("video").forEach(function(o){ if(o!==vid) o.pause(); });
+  });
+  g.appendChild(card);
+});
+</script>
+</body>
+</html>
