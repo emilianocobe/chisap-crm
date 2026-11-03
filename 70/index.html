@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chisap · 70 años — Contá tu historia</title>
+<meta name="description" content="Chisap cumple 70 años (1956–2026). Dejá tu historia con la marca, sumala al mural del aniversario y participá del Sorteo 70 Años.">
+<link rel="icon" href="../assets/logo.png">
+<link rel="stylesheet" href="../assets/brand.css">
+<style>
+/* ══════ 70 AÑOS · estética de la casa sobre brand.css ══════ */
+.w{max-width:1140px;margin:0 auto;padding:0 24px}
+.hero{position:relative;overflow:hidden;padding:84px 0 64px;text-align:center;
+  background:radial-gradient(1100px 620px at 50% -16%,rgba(209,40,27,.55),transparent 62%),
+             radial-gradient(640px 420px at 100% 110%,rgba(242,183,5,.12),transparent 60%),var(--fondo)}
+.hero .wm{position:absolute;font-family:var(--disp);font-weight:900;color:rgba(255,255,255,.035);
+  font-size:clamp(150px,30vw,420px);top:46%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;letter-spacing:-.05em}
+.setenta{font-family:var(--disp);font-weight:900;font-size:clamp(84px,17vw,190px);line-height:.9;letter-spacing:-.05em;
+  background:linear-gradient(115deg,#FFD54A 10%,var(--oro) 45%,var(--rojo-vivo) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1{font-size:clamp(26px,4.6vw,46px);font-weight:900;margin:6px 0 12px;letter-spacing:-.03em}
+.hero p{color:var(--tinta3);font-size:clamp(14.5px,2vw,18px);max-width:640px;margin:0 auto}
+.anios{display:flex;gap:14px;justify-content:center;align-items:center;margin:18px 0 6px;position:relative;z-index:2}
+.anios b{font-family:var(--disp);font-weight:800;font-size:15px;color:var(--oro)}
+.anios i{width:72px;height:2px;background:linear-gradient(90deg,var(--rojo-vivo),var(--oro))}
+.sec{padding:72px 0;position:relative}
+.sec-t{max-width:760px;margin:0 auto 38px;text-align:center}
+.sec-t h2{font-size:clamp(26px,4.4vw,42px);font-weight:900;margin:10px 0}
+.sec-t p{color:var(--tinta3);font-size:16px}
+
+/* ── línea de décadas ── */
+.decadas{display:flex;gap:10px;overflow-x:auto;padding:8px 2px 18px;scrollbar-width:thin}
+.dec{flex:0 0 auto;background:var(--sup);border:1px solid var(--linea);border-radius:16px;padding:16px 18px;min-width:168px;transition:var(--t)}
+.dec:hover{transform:translateY(-3px);border-color:rgba(242,183,5,.45)}
+.dec b{font-family:var(--disp);font-weight:900;font-size:22px;color:var(--oro);display:block}
+.dec span{font-size:12px;color:var(--tinta3);line-height:1.4;display:block;margin-top:5px}
+
+/* ── mural ── */
+.filtros-mural{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:26px}
+.fbtn{background:var(--sup);border:1px solid var(--linea);color:var(--tinta2);font-family:inherit;font-weight:700;
+  font-size:12.5px;padding:8px 16px;border-radius:99px;cursor:pointer;transition:var(--t)}
+.fbtn:hover{border-color:rgba(242,183,5,.5)}
+.fbtn.act{background:var(--oro);color:#111;border-color:var(--oro)}
+.mural{columns:3;column-gap:18px}
+@media(max-width:960px){.mural{columns:2}}
+@media(max-width:620px){.mural{columns:1}}
+.historia{break-inside:avoid;background:var(--sup);border:1px solid var(--linea);border-radius:18px;
+  padding:20px;margin:0 0 18px;position:relative;transition:var(--t)}
+.historia:hover{transform:translateY(-3px);border-color:rgba(242,183,5,.4)}
+.historia .dec-tag{position:absolute;top:-10px;right:14px;background:var(--rojo);color:#fff;font-family:var(--disp);
+  font-weight:800;font-size:10.5px;letter-spacing:.08em;padding:3px 11px;border-radius:99px}
+.historia .comillas{font-family:var(--disp);font-weight:900;font-size:34px;color:var(--oro);line-height:.6;display:block;margin-bottom:8px}
+.historia p{font-size:13.8px;color:var(--tinta2);line-height:1.6}
+.historia .quien{display:flex;gap:10px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--linea)}
+.historia .ava{width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,var(--rojo),var(--rojo-osc));
+  display:grid;place-items:center;font-family:var(--disp);font-weight:800;font-size:13px;color:#fff;flex:0 0 auto}
+.historia .quien b{font-size:12.5px;display:block}
+.historia .quien small{font-size:10.5px;color:var(--tinta3)}
+.historia.revision{border-style:dashed;border-color:rgba(242,183,5,.5)}
+.historia .rev-tag{position:absolute;top:-10px;left:14px;background:var(--oro);color:#111;font-family:var(--disp);
+  font-weight:800;font-size:10px;letter-spacing:.06em;padding:3px 10px;border-radius:99px}
+
+/* ── form ── */
+.panel{background:linear-gradient(160deg,var(--sup2),#15151b);border:1px solid var(--linea);border-radius:24px;
+  padding:34px;max-width:720px;margin:0 auto;box-shadow:var(--sombra)}
+.campo{margin-bottom:14px}
+.campo label{display:block;font-size:12px;font-weight:700;color:var(--tinta3);margin-bottom:6px}
+.campo label b{color:var(--oro)}
+.campo input,.campo textarea,.campo select{width:100%}
+textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
+.contador{font-size:11px;color:var(--tinta3);text-align:right;margin-top:4px}
+.prompts{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 16px}
+.prompt{background:rgba(242,183,5,.1);border:1px dashed rgba(242,183,5,.45);color:var(--oro-claro);
+  font-family:inherit;font-size:12px;font-weight:600;padding:7px 13px;border-radius:99px;cursor:pointer;transition:var(--t)}
+.prompt:hover{background:rgba(242,183,5,.2)}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--tinta3);margin:16px 0;cursor:pointer;line-height:1.5}
+.consent input{width:auto;margin-top:3px;accent-color:var(--oro)}
+.err-msg{color:var(--rojo-luz);font-size:12.5px;margin-top:10px;display:none}
+.sorteo{display:flex;gap:16px;align-items:center;background:rgba(242,183,5,.08);border:1px solid rgba(242,183,5,.35);
+  border-radius:16px;padding:16px 18px;margin:26px auto 0;max-width:720px}
+.sorteo .e{font-size:30px}
+.sorteo b{color:var(--oro-claro)}
+.sorteo p{font-size:13px;color:var(--tinta3)}
+.gracias{text-align:center;padding:10px 0}
+.gracias .tick{font-size:52px}
+.pie70{background:#0A0A0E;border-top:1px solid var(--linea);padding:32px 0;color:var(--tinta3);font-size:12px}
+.err{border-color:var(--rojo-vivo)!important;animation:shake .35s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.confetti{position:fixed;width:9px;height:9px;top:-12px;z-index:300;animation:caer 2.8s linear forwards;pointer-events:none}
+@keyframes caer{to{transform:translateY(105vh) rotate(720deg);opacity:.2}}
+</style>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+  <div class="wm">1956</div>
+  <div class="w" style="position:relative;z-index:2">
+    <img src="../assets/logo.png" alt="Chisap Fiesta" style="height:56px;margin:0 auto 14px">
+    <div class="anios"><b>1956</b><i></i><span class="setenta">70</span><i></i><b>2026</b></div>
+    <h1>Setenta años de juntadas.<br>Una sola historia: <em style="font-style:normal;color:var(--oro)">la tuya.</em></h1>
+    <p>Tres generaciones, 35 sucursales y millones de panchos después, la historia de Chisap la escribieron ustedes. Contanos la tuya: las mejores quedan en el mural del aniversario y todas participan del <b style="color:var(--tinta)">Sorteo 70 Años</b>.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px">
+      <a class="btn btn-oro" style="font-size:15px;padding:14px 30px" href="#contar">✍️ Contá tu historia</a>
+      <a class="btn btn-ghost" href="#mural">Ver el mural</a>
+    </div>
+    <p style="font-size:11.5px;margin-top:16px">Sin compromiso · te toma 2 minutos · tus datos no se publican</p>
+  </div>
+</header>
+
+<!-- ══════════ DÉCADAS ══════════ -->
+<section class="sec" style="padding-bottom:30px">
+  <div class="w">
+    <div class="sec-t">
+      <span class="ojo">El recorrido</span>
+      <h2>Siete décadas de fiesta.</h2>
+    </div>
+    <div class="decadas" id="decadas">
+      <div class="dec"><b>1956</b><span>Nace Chisap: una familia, una receta y un barrio que empezó a festejar distinto.</span></div>
+      <div class="dec"><b>'60s</b><span>El pancho de Chisap se vuelve el clásico de los cumpleaños del barrio.</span></div>
+      <div class="dec"><b>'70s</b><span>Primera fábrica propia: panificados que salen calientes a la calle.</span></div>
+      <div class="dec"><b>'80s</b><span>La segunda generación toma la posta y nacen los combos para juntadas.</span></div>
+      <div class="dec"><b>'90s</b><span>Chisap Fiesta: la marca se viste de rojo y oro y cruza el conurbano.</span></div>
+      <div class="dec"><b>'00s</b><span>Producción propia de aderezos: ocho sabores de la casa.</span></div>
+      <div class="dec"><b>'10s</b><span>La red de sucursales se expande; tercera generación al frente.</span></div>
+      <div class="dec"><b>'20s</b><span>Tienda online, 35 sucursales y una comunidad que no para de crecer.</span></div>
+    </div>
+    <p style="text-align:center;font-size:11px;color:var(--tinta3)">Hitos ilustrativos de la demo — el contenido final lo valida Chisap.</p>
+  </div>
+</section>
+
+<!-- ══════════ MURAL ══════════ -->
+<section class="sec" id="mural" style="padding-top:36px">
+  <div class="w">
+    <div class="sec-t">
+      <span class="ojo">El mural de los 70 años</span>
+      <h2>Las historias que nos trajeron hasta acá.</h2>
+      <p>Cada tarjeta es un recuerdo real de alguien con la marca. Filtrá por década o sumá el tuyo.</p>
+    </div>
+    <div class="filtros-mural" id="filtros"></div>
+    <div class="mural" id="muralGrid"></div>
+  </div>
+</section>
+
+<!-- ══════════ FORMULARIO ══════════ -->
+<section class="sec" id="contar" style="background:var(--sup);border-top:1px solid var(--linea);border-bottom:1px solid var(--linea)">
+  <div class="w">
+    <div class="sec-t">
+      <span class="ojo">Tu turno</span>
+      <h2>Dejá tu historia en el mural.</h2>
+      <p>¿No sabés por dónde empezar? Tocá una de las ideas y seguila.</p>
+    </div>
+
+    <div class="panel" id="panelForm">
+      <div class="prompts">
+        <button type="button" class="prompt" data-t="Mi primer recuerdo con Chisap es ">🕰️ Tu primer recuerdo</button>
+        <button type="button" class="prompt" data-t="En mi familia, Chisap siempre fue ">👨‍👩‍👧 Una tradición familiar</button>
+        <button type="button" class="prompt" data-t="El cumpleaños que nunca me voy a olvidar fue ">🎂 Un cumpleaños inolvidable</button>
+        <button type="button" class="prompt" data-t="La juntada más épica con Chisap fue ">🌭 La juntada más épica</button>
+      </div>
+      <div class="g c2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="campo"><label>Nombre y apellido <b>*</b></label><input id="f_nombre" autocomplete="name" placeholder="Ej: Marta Gutiérrez"></div>
+        <div class="campo"><label>Década de tu historia</label>
+          <select id="f_decada"><option value="">Elegí (opcional)</option><option>'60s</option><option>'70s</option><option>'80s</option><option>'90s</option><option>'00s</option><option>'10s</option><option>'20s</option></select></div>
+        <div class="campo"><label>Email <b>*</b></label><input id="f_email" inputmode="email" autocomplete="email" placeholder="Ej: marta@example.com"></div>
+        <div class="campo"><label>Teléfono <b>*</b></label><input id="f_tel" inputmode="tel" autocomplete="tel" placeholder="Ej: 11 5555 0100"></div>
+      </div>
+      <div class="campo"><label>Tu historia <b>*</b></label>
+        <textarea id="f_historia" maxlength="600" placeholder="Contanos ese momento: quiénes estaban, qué se festejaba, qué no faltó en la mesa…"></textarea>
+        <div class="contador"><span id="cont">0</span>/600</div>
+      </div>
+      <label class="consent"><input type="checkbox" id="f_consent">
+        Soy mayor de 18 años y autorizo a Chisap S.A. a publicar esta historia (con mi nombre de pila) en el mural del aniversario y en sus canales. Mi email y teléfono no se publican: se usan solo para contactarme por el sorteo. <b style="color:var(--oro)">Bases y condiciones del Sorteo 70 Años.</b></label>
+      <button class="btn btn-oro" style="width:100%;font-size:15px;padding:15px" id="btnEnviar">🎉 Sumar mi historia y participar del sorteo</button>
+      <div class="err-msg" id="errMsg"></div>
+      <p style="font-size:11px;color:var(--tinta3);margin-top:12px;text-align:center">Tu historia entra al mural después de una revisión breve del equipo (menos de 48 h).</p>
+    </div>
+
+    <div class="sorteo">
+      <span class="e">🎁</span>
+      <p><b>Sorteo 70 Años:</b> entre todas las historias recibidas sorteamos <b>70 combos fiesteros</b> y un gran premio aniversario. Una participación por persona. El premio final lo define Chisap — este texto es de la demo.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="pie70">
+  <div class="w" style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center">
+    <span><b style="color:#fff">Chisap S.A.</b> · 1956–2026 · 70 años</span>
+    <span>Demo de la acción aniversario · los datos quedan en tu navegador</span>
+  </div>
+</footer>
+
+<script>
+"use strict";
+/* ══════ datos ══════
+   Historias sembradas (FICTICIAS, para la demo: prueba social del mural).
+   En producción: las entradas van a un endpoint/planilla y pasan por moderación
+   antes de publicarse; el consentimiento queda registrado con fecha y texto. */
+var SEMBRADAS = [
+  { d: "'60s", n: "Osvaldo", de: "Ciudadela", t: "Mi viejo me llevaba de la mano a buscar los panchos para los domingos. El olor del pan calentito en la bolsa de papel es mi infancia entera." },
+  { d: "'70s", n: "Marta", de: "Ramos Mejía", t: "Para mi comunión, la abuela encargó todo en Chisap. Llovió, se cortó la luz, y igual fue la mejor fiesta del barrio: a la luz de las velas, con panchos para cuarenta." },
+  { d: "'80s", n: "Rubén", de: "San Justo", t: "Mi primer trabajo fue repartiendo pedidos de Chisap en bicicleta. Treinta años después volví a la misma sucursal… a encargar el cumpleaños de quince de mi hija." },
+  { d: "'80s", n: "Graciela", de: "Monte Grande", t: "En casa éramos seis hermanos. Mamá decía: 'cumpleaños sin Chisap no es cumpleaños'. Lo sigo diciendo yo, palabra por palabra." },
+  { d: "'90s", n: "Sergio", de: "La Plata", t: "Festejamos el ascenso del club del barrio con una mesa de tres metros llena de superpanchos. Todavía hay fotos colgadas en la sede." },
+  { d: "'90s", n: "Claudia", de: "Florencio Varela", t: "Mi marido me propuso casamiento en una juntada con amigos. Escondió el anillo en la caja de los combos. Casi me lo como." },
+  { d: "'00s", n: "Diego", de: "Castelar", t: "Cuando nació mi primer hijo salimos del sanatorio y lo primero que hicimos fue parar en Chisap. Cansancio, felicidad y un pancho con todo. Ritual cumplido." },
+  { d: "'10s", n: "Antonela", de: "Mar del Plata", t: "Me mudé a Mardel y extrañaba los cumpleaños de Buenos Aires. El día que abrió la sucursal acá, le mandé la foto a todo el grupo familiar. Fue un acontecimiento." },
+  { d: "'20s", n: "Brisa", de: "Caseros", t: "En pandemia festejamos el cumple de la abuela por videollamada, cada casa con su combo de Chisap. Estábamos lejos y éramos la misma mesa." },
+  { d: "'20s", n: "Tobías", de: "Devoto", t: "Pedí por la tienda online para la juntada de egresados. Somos la tercera generación que festeja con lo mismo, y ahora llega con un clic." }
+];
+var LS = "chisap_70_historias";
+
+/* ══════ mural ══════ */
+var filtroAct = "todas";
+function propias(){ try { return JSON.parse(localStorage.getItem(LS) || "[]"); } catch (e) { return []; } }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function card(h, propia){
+  var ini = (h.n || "?").trim().charAt(0).toUpperCase();
+  return '<article class="historia' + (propia ? " revision" : "") + '">' +
+    (propia ? '<span class="rev-tag">EN REVISIÓN · solo la ves vos</span>' : "") +
+    (h.d ? '<span class="dec-tag">' + esc(h.d) + "</span>" : "") +
+    '<span class="comillas">“</span><p>' + esc(h.t) + "</p>" +
+    '<div class="quien"><div class="ava">' + esc(ini) + '</div><div><b>' + esc(h.n) + (propia ? "" : " (ejemplo)") + "</b>" +
+    '<small>' + esc(h.de || "") + (propia ? " · recién enviada" : " · historia de la demo") + "</small></div></div></article>";
+}
+function pintarMural(){
+  var todas = SEMBRADAS.map(function (h) { return { h: h, p: false }; })
+    .concat(propias().map(function (h) { return { h: h, p: true }; }));
+  var vis = todas.filter(function (x) { return filtroAct === "todas" || x.h.d === filtroAct; });
+  document.getElementById("muralGrid").innerHTML = vis.length
+    ? vis.map(function (x) { return card(x.h, x.p); }).join("")
+    : '<p style="color:var(--tinta3);text-align:center;column-span:all">Todavía no hay historias de esa década — la tuya puede ser la primera.</p>';
+}
+function pintarFiltros(){
+  var decs = ["todas", "'60s", "'70s", "'80s", "'90s", "'00s", "'10s", "'20s"];
+  document.getElementById("filtros").innerHTML = decs.map(function (d) {
+    return '<button class="fbtn' + (filtroAct === d ? " act" : "") + '" data-d="' + d + '">' + (d === "todas" ? "Todas" : d) + "</button>";
+  }).join("");
+}
+document.getElementById("filtros").addEventListener("click", function (e) {
+  var b = e.target.closest(".fbtn"); if (!b) return;
+  filtroAct = b.dataset.d; pintarFiltros(); pintarMural();
+});
+
+/* ══════ form ══════ */
+var ta = document.getElementById("f_historia");
+ta.addEventListener("input", function () { document.getElementById("cont").textContent = ta.value.length; });
+document.querySelectorAll(".prompt").forEach(function (p) {
+  p.addEventListener("click", function () {
+    if (!ta.value.trim()) { ta.value = p.dataset.t; document.getElementById("cont").textContent = ta.value.length; }
+    ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+  });
+});
+function marcar(el){ el.classList.add("err"); setTimeout(function () { el.classList.remove("err"); }, 700); }
+document.getElementById("btnEnviar").addEventListener("click", function () {
+  var nombre = document.getElementById("f_nombre"), email = document.getElementById("f_email"),
+      tel = document.getElementById("f_tel"), cons = document.getElementById("f_consent"),
+      errBox = document.getElementById("errMsg");
+  var err = "";
+  if (!nombre.value.trim()) { marcar(nombre); err = "Falta tu nombre."; }
+  else if (!email.value.trim() || email.value.indexOf("@") < 1) { marcar(email); err = "Revisá el email."; }
+  else if (tel.value.replace(/\D/g, "").length < 8) { marcar(tel); err = "Revisá el teléfono."; }
+  else if (ta.value.trim().length < 30) { marcar(ta); err = "Contanos un poco más: al menos un par de líneas (mínimo 30 caracteres)."; }
+  else if (!cons.checked) { err = "Necesitamos tu autorización para publicar la historia y contactarte por el sorteo."; }
+  if (err) { errBox.textContent = err; errBox.style.display = "block"; return; }
+  errBox.style.display = "none";
+
+  var h = { n: nombre.value.trim().split(" ")[0], de: "", d: document.getElementById("f_decada").value, t: ta.value.trim(),
+            enviado: new Date().toISOString(), consentimiento: true };
+  try { var arr = propias(); arr.unshift(h); localStorage.setItem(LS, JSON.stringify(arr)); } catch (e) {}
+  /* producción: acá va el POST al endpoint (nombre, email, tel, historia, consentimiento con fecha) */
+
+  document.getElementById("panelForm").innerHTML =
+    '<div class="gracias"><div class="tick">🎉</div>' +
+    '<h3 style="font-family:var(--disp);font-weight:900;font-size:24px;margin:10px 0">¡Gracias, ' + esc(h.n) + "!</h3>" +
+    '<p style="color:var(--tinta3);font-size:14px;max-width:440px;margin:0 auto">Tu historia quedó <b style="color:var(--oro)">en revisión</b> (ya la podés ver marcada en el mural). Si el equipo la aprueba, se publica en menos de 48 h. Y ya estás participando del <b style="color:var(--oro)">Sorteo 70 Años</b> — te avisamos por email o WhatsApp.</p>' +
+    '<a class="btn btn-ghost" style="margin-top:20px" href="#mural">Ver mi historia en el mural ↑</a></div>';
+  filtroAct = "todas"; pintarFiltros(); pintarMural();
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    var cols = ["#F2B705", "#E2231A", "#25D366", "#FFD54A", "#7B95FF"];
+    for (var i = 0; i < 70; i++) { var c = document.createElement("div"); c.className = "confetti";
+      c.style.left = Math.random() * 100 + "vw"; c.style.background = cols[i % cols.length];
+      c.style.animationDelay = Math.random() * .8 + "s"; document.body.appendChild(c);
+      setTimeout(function (el) { return function () { el.remove(); }; }(c), 3600); }
+  }
+});
+
+pintarFiltros(); pintarMural();
+</script>
+</body>
+</html>
