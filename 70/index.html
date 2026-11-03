@@ -4,63 +4,113 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Chisap · 70 años — Contá tu historia</title>
-<meta name="description" content="Chisap cumple 70 años (1956–2026). Dejá tu historia con la marca, sumala al mural del aniversario y participá del Sorteo 70 Años.">
+<meta name="description" content="Chisap cumple 70 años (1956–2026). Distintas épocas, mismo sabor de siempre. Dejá tu historia con la marca, sumala al mural del aniversario y participá del Sorteo 70 Años.">
 <link rel="icon" href="../assets/logo.png">
 <link rel="stylesheet" href="../assets/brand.css">
 <style>
-/* ══════ 70 AÑOS · estética de la casa sobre brand.css ══════ */
+/* ══════ 70 AÑOS · sistema visual de la campaña (gráficas RRSS 70s) ══════
+   · fotos cálidas full-bleed con velo + DEGRADÉ ROJO al pie
+   · años/palabras clave en tipografía CONTORNO con regla roja corta
+   · RESALTADOR amarillo con texto rojo (marcador)
+   · lockup 70 blanco con el óvalo del logo dentro del cero
+   · 1956 – 2026 espaciado                                              */
 .w{max-width:1140px;margin:0 auto;padding:0 24px}
-.hero{position:relative;overflow:hidden;padding:84px 0 64px;text-align:center;
-  background:radial-gradient(1100px 620px at 50% -16%,rgba(209,40,27,.55),transparent 62%),
-             radial-gradient(640px 420px at 100% 110%,rgba(242,183,5,.12),transparent 60%),var(--fondo)}
-.hero .wm{position:absolute;font-family:var(--disp);font-weight:900;color:rgba(255,255,255,.035);
-  font-size:clamp(150px,30vw,420px);top:46%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;letter-spacing:-.05em}
-.setenta{font-family:var(--disp);font-weight:900;font-size:clamp(84px,17vw,190px);line-height:.9;letter-spacing:-.05em;
-  background:linear-gradient(115deg,#FFD54A 10%,var(--oro) 45%,var(--rojo-vivo) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero h1{font-size:clamp(26px,4.6vw,46px);font-weight:900;margin:6px 0 12px;letter-spacing:-.03em}
-.hero p{color:var(--tinta3);font-size:clamp(14.5px,2vw,18px);max-width:640px;margin:0 auto}
-.anios{display:flex;gap:14px;justify-content:center;align-items:center;margin:18px 0 6px;position:relative;z-index:2}
-.anios b{font-family:var(--disp);font-weight:800;font-size:15px;color:var(--oro)}
-.anios i{width:72px;height:2px;background:linear-gradient(90deg,var(--rojo-vivo),var(--oro))}
-.sec{padding:72px 0;position:relative}
-.sec-t{max-width:760px;margin:0 auto 38px;text-align:center}
+
+/* resaltador de la campaña */
+.marca{display:inline-block;background:var(--oro);color:#B01407;font-weight:900;
+  padding:2px 12px 3px;transform:rotate(-1.2deg);border-radius:3px;white-space:nowrap}
+/* tipografía contorno */
+.outline{font-family:var(--disp);font-weight:900;color:transparent;
+  -webkit-text-stroke:2.5px #fff;letter-spacing:.02em;line-height:1}
+.outline.roja{-webkit-text-stroke-color:var(--rojo-vivo)}
+.regla-roja{width:74px;height:4px;background:var(--rojo-vivo);border-radius:2px;margin:12px 0 16px}
+.fechas{font-family:var(--mono,monospace);font-weight:600;font-size:14px;letter-spacing:.55em;color:#fff;opacity:.9}
+
+/* degradé rojo de pie de sección (sello de la campaña) */
+.fade-rojo{position:absolute;left:0;right:0;bottom:0;height:160px;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(195,28,15,.55) 70%,rgba(176,20,7,.75))}
+
+/* ── hero ── */
+.hero{position:relative;overflow:hidden;padding:90px 0 110px;text-align:center;color:#fff;
+  background:#1a0d08 url('img/hero-panchos.jpg') center 35%/cover no-repeat}
+.hero:before{content:'';position:absolute;inset:0;background:radial-gradient(900px 600px at 50% 30%,rgba(20,8,4,.25),rgba(20,8,4,.78) 85%)}
+.hero>.w{position:relative;z-index:2}
+.lockup{position:relative;display:inline-block;margin:6px 0 2px;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}
+.lockup .n70{font-family:var(--disp);font-weight:900;font-size:clamp(130px,25vw,230px);line-height:.88;color:#fff;letter-spacing:-.04em}
+.lockup .cero{position:relative;display:inline-block;color:transparent;-webkit-text-stroke:5px #fff}
+.lockup .oval{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
+  width:60%;filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}
+.lockup .anios-script{position:absolute;right:-8px;bottom:-14px;font-family:'Segoe Script','Brush Script MT',cursive;
+  font-size:clamp(20px,4vw,32px);color:#fff;transform:rotate(-6deg)}
+.hero h1{font-size:clamp(25px,4.4vw,44px);font-weight:900;margin:22px 0 10px;letter-spacing:-.02em;text-shadow:0 2px 18px rgba(0,0,0,.5)}
+.hero .tag{font-size:clamp(15px,2.2vw,19px);font-weight:600;color:#FFE9D6;text-shadow:0 1px 10px rgba(0,0,0,.6)}
+.hero .sub{color:#F4DFCE;font-size:clamp(14px,1.9vw,16.5px);max-width:620px;margin:14px auto 0;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.hero .sub b{color:#fff}
+.kicker{font-family:var(--disp);font-weight:800;font-size:clamp(13px,2vw,17px);letter-spacing:.04em;text-transform:uppercase}
+
+/* ── secciones ── */
+.sec{padding:76px 0;position:relative}
+.sec-t{max-width:780px;margin:0 auto 38px;text-align:center}
 .sec-t h2{font-size:clamp(26px,4.4vw,42px);font-weight:900;margin:10px 0}
 .sec-t p{color:var(--tinta3);font-size:16px}
 
-/* ── línea de décadas ── */
-.decadas{display:flex;gap:10px;overflow-x:auto;padding:8px 2px 18px;scrollbar-width:thin}
-.dec{flex:0 0 auto;background:var(--sup);border:1px solid var(--linea);border-radius:16px;padding:16px 18px;min-width:168px;transition:var(--t)}
-.dec:hover{transform:translateY(-3px);border-color:rgba(242,183,5,.45)}
-.dec b{font-family:var(--disp);font-weight:900;font-size:22px;color:var(--oro);display:block}
-.dec span{font-size:12px;color:var(--tinta3);line-height:1.4;display:block;margin-top:5px}
+/* ── décadas: placas fotográficas de archivo ── */
+.decadas{display:flex;gap:16px;overflow-x:auto;padding:10px 4px 22px;scrollbar-width:thin;scroll-snap-type:x proximity}
+.dec{flex:0 0 272px;scroll-snap-align:start;position:relative;border-radius:18px;overflow:hidden;
+  border:1px solid var(--linea);min-height:360px;display:flex;align-items:flex-end;transition:var(--t);background:#201510}
+.dec:hover{transform:translateY(-4px)}
+.dec .ph{position:absolute;inset:0;background-size:cover;background-position:center;filter:sepia(.25) saturate(.9)}
+.dec.hoy .ph{filter:none}
+.dec:after{content:'';position:absolute;inset:0;background:linear-gradient(185deg,rgba(15,8,5,.18) 30%,rgba(15,8,5,.86) 78%)}
+.dec .tx{position:relative;z-index:2;padding:18px}
+.dec .anio{font-size:34px;display:block;-webkit-text-stroke-width:2px}
+.dec .rr{width:46px;height:3px;background:var(--rojo-vivo);border-radius:2px;margin:7px 0 9px}
+.dec p{font-size:12.5px;color:#F2E7DC;line-height:1.5}
+.dec p b{color:#fff}
 
-/* ── mural ── */
+/* ── mural: papel de recuerdos ── */
 .filtros-mural{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:26px}
 .fbtn{background:var(--sup);border:1px solid var(--linea);color:var(--tinta2);font-family:inherit;font-weight:700;
   font-size:12.5px;padding:8px 16px;border-radius:99px;cursor:pointer;transition:var(--t)}
 .fbtn:hover{border-color:rgba(242,183,5,.5)}
-.fbtn.act{background:var(--oro);color:#111;border-color:var(--oro)}
+.fbtn.act{background:var(--oro);color:#8A1206;border-color:var(--oro)}
 .mural{columns:3;column-gap:18px}
 @media(max-width:960px){.mural{columns:2}}
 @media(max-width:620px){.mural{columns:1}}
-.historia{break-inside:avoid;background:var(--sup);border:1px solid var(--linea);border-radius:18px;
-  padding:20px;margin:0 0 18px;position:relative;transition:var(--t)}
-.historia:hover{transform:translateY(-3px);border-color:rgba(242,183,5,.4)}
+.historia{break-inside:avoid;background:#F8F2E7;color:#241812;border:1px solid #E4D7C3;border-radius:14px;
+  padding:20px;margin:0 0 18px;position:relative;transition:var(--t);box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.historia:hover{transform:translateY(-3px) rotate(.3deg)}
 .historia .dec-tag{position:absolute;top:-10px;right:14px;background:var(--rojo);color:#fff;font-family:var(--disp);
   font-weight:800;font-size:10.5px;letter-spacing:.08em;padding:3px 11px;border-radius:99px}
-.historia .comillas{font-family:var(--disp);font-weight:900;font-size:34px;color:var(--oro);line-height:.6;display:block;margin-bottom:8px}
-.historia p{font-size:13.8px;color:var(--tinta2);line-height:1.6}
-.historia .quien{display:flex;gap:10px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--linea)}
+.historia .comillas{font-family:var(--disp);font-weight:900;font-size:36px;color:var(--rojo-vivo);line-height:.6;display:block;margin-bottom:8px}
+.historia p{font-size:13.8px;color:#3A2A1E;line-height:1.62}
+.historia .quien{display:flex;gap:10px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed #D8C7AE}
 .historia .ava{width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,var(--rojo),var(--rojo-osc));
   display:grid;place-items:center;font-family:var(--disp);font-weight:800;font-size:13px;color:#fff;flex:0 0 auto}
-.historia .quien b{font-size:12.5px;display:block}
-.historia .quien small{font-size:10.5px;color:var(--tinta3)}
-.historia.revision{border-style:dashed;border-color:rgba(242,183,5,.5)}
-.historia .rev-tag{position:absolute;top:-10px;left:14px;background:var(--oro);color:#111;font-family:var(--disp);
+.historia .quien b{font-size:12.5px;display:block;color:#8A1206}
+.historia .quien small{font-size:10.5px;color:#9A8468}
+.historia.revision{border:1.5px dashed var(--oro-osc);background:#FFF8E4}
+.historia .rev-tag{position:absolute;top:-10px;left:14px;background:var(--oro);color:#8A1206;font-family:var(--disp);
   font-weight:800;font-size:10px;letter-spacing:.06em;padding:3px 10px;border-radius:99px}
+.historia.archivo{padding:12px;background:#FDFBF6}
+.historia.archivo img{width:100%;border-radius:8px;display:block}
+.historia.archivo small{display:block;text-align:center;color:#9A8468;font-size:10.5px;margin-top:8px}
+
+/* ── momentos: antes / ahora ── */
+.momentos{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;margin:0 auto}
+@media(max-width:680px){.momentos{grid-template-columns:1fr}}
+.mom{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--linea);aspect-ratio:5/4}
+.mom img{width:100%;height:100%;object-fit:cover;display:block}
+.mom.sep img{filter:sepia(.3) saturate(.85)}
+.mom span{position:absolute;left:14px;bottom:12px;z-index:2}
+.mom:after{content:'';position:absolute;inset:0;background:linear-gradient(190deg,transparent 55%,rgba(15,8,5,.7))}
+.mom span{font-family:var(--disp);font-weight:900;font-size:22px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6)}
 
 /* ── form ── */
-.panel{background:linear-gradient(160deg,var(--sup2),#15151b);border:1px solid var(--linea);border-radius:24px;
+.sec-form{position:relative;background:#140B07 url('img/panes-hoy.jpg') center/cover no-repeat}
+.sec-form:before{content:'';position:absolute;inset:0;background:rgba(18,9,5,.88)}
+.sec-form>.w{position:relative;z-index:2}
+.panel{background:linear-gradient(160deg,rgba(26,20,16,.96),rgba(16,12,10,.97));border:1px solid rgba(242,183,5,.25);border-radius:24px;
   padding:34px;max-width:720px;margin:0 auto;box-shadow:var(--sombra)}
 .campo{margin-bottom:14px}
 .campo label{display:block;font-size:12px;font-weight:700;color:var(--tinta3);margin-bottom:6px}
@@ -68,6 +118,8 @@
 .campo input,.campo textarea,.campo select{width:100%}
 textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
 .contador{font-size:11px;color:var(--tinta3);text-align:right;margin-top:4px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.fgrid{grid-template-columns:1fr}}
 .prompts{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 16px}
 .prompt{background:rgba(242,183,5,.1);border:1px dashed rgba(242,183,5,.45);color:var(--oro-claro);
   font-family:inherit;font-size:12px;font-weight:600;padding:7px 13px;border-radius:99px;cursor:pointer;transition:var(--t)}
@@ -75,14 +127,14 @@ textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
 .consent{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--tinta3);margin:16px 0;cursor:pointer;line-height:1.5}
 .consent input{width:auto;margin-top:3px;accent-color:var(--oro)}
 .err-msg{color:var(--rojo-luz);font-size:12.5px;margin-top:10px;display:none}
-.sorteo{display:flex;gap:16px;align-items:center;background:rgba(242,183,5,.08);border:1px solid rgba(242,183,5,.35);
-  border-radius:16px;padding:16px 18px;margin:26px auto 0;max-width:720px}
+.sorteo{display:flex;gap:16px;align-items:center;background:rgba(242,183,5,.1);border:1px solid rgba(242,183,5,.4);
+  border-radius:16px;padding:16px 18px;margin:26px auto 0;max-width:720px;position:relative;z-index:2}
 .sorteo .e{font-size:30px}
 .sorteo b{color:var(--oro-claro)}
-.sorteo p{font-size:13px;color:var(--tinta3)}
+.sorteo p{font-size:13px;color:#E8D9C8}
 .gracias{text-align:center;padding:10px 0}
 .gracias .tick{font-size:52px}
-.pie70{background:#0A0A0E;border-top:1px solid var(--linea);padding:32px 0;color:var(--tinta3);font-size:12px}
+.pie70{background:#0A0604;border-top:1px solid var(--linea);padding:34px 0;color:#C9B29B;font-size:12px;position:relative}
 .err{border-color:var(--rojo-vivo)!important;animation:shake .35s}
 @keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 .confetti{position:fixed;width:9px;height:9px;top:-12px;z-index:300;animation:caer 2.8s linear forwards;pointer-events:none}
@@ -91,40 +143,67 @@ textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
 </head>
 <body>
 
-<!-- ══════════ HERO ══════════ -->
+<!-- ══════════ HERO · lockup de la campaña sobre macro de panchos ══════════ -->
 <header class="hero">
-  <div class="wm">1956</div>
-  <div class="w" style="position:relative;z-index:2">
-    <img src="../assets/logo.png" alt="Chisap Fiesta" style="height:56px;margin:0 auto 14px">
-    <div class="anios"><b>1956</b><i></i><span class="setenta">70</span><i></i><b>2026</b></div>
-    <h1>Setenta años de juntadas.<br>Una sola historia: <em style="font-style:normal;color:var(--oro)">la tuya.</em></h1>
-    <p>Tres generaciones, 35 sucursales y millones de panchos después, la historia de Chisap la escribieron ustedes. Contanos la tuya: las mejores quedan en el mural del aniversario y todas participan del <b style="color:var(--tinta)">Sorteo 70 Años</b>.</p>
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px">
-      <a class="btn btn-oro" style="font-size:15px;padding:14px 30px" href="#contar">✍️ Contá tu historia</a>
-      <a class="btn btn-ghost" href="#mural">Ver el mural</a>
+  <div class="w">
+    <div class="kicker">Cumplimos <span class="marca">70 años</span> de historia</div>
+    <div class="lockup">
+      <span class="n70">7<span class="cero">0<img class="oval" src="../assets/logo.png" alt="Chisap"></span></span>
+      <span class="anios-script">Años</span>
     </div>
-    <p style="font-size:11.5px;margin-top:16px">Sin compromiso · te toma 2 minutos · tus datos no se publican</p>
+    <div class="fechas">1956&nbsp;–&nbsp;2026</div>
+    <h1>Setenta años de juntadas.<br>Una sola historia: <em style="font-style:normal;color:var(--oro-claro)">la tuya.</em></h1>
+    <p class="tag">Distintas épocas, mismo sabor de siempre.</p>
+    <p class="sub">Dos generaciones, 35 sucursales y millones de panchos después, la historia de Chisap la escribieron ustedes. Contanos la tuya: las mejores quedan en el <b>mural del aniversario</b> y todas participan del <b>Sorteo 70 Años</b>.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px">
+      <a class="btn btn-oro" style="font-size:15px;padding:14px 30px" href="#contar">✍️ Contá tu historia</a>
+      <a class="btn" style="background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.4)" href="#mural">Ver el mural</a>
+    </div>
+    <p style="font-size:11.5px;margin-top:16px;color:#EBD6C2">Sin compromiso · te toma 2 minutos · tus datos no se publican</p>
   </div>
+  <div class="fade-rojo"></div>
 </header>
 
-<!-- ══════════ DÉCADAS ══════════ -->
-<section class="sec" style="padding-bottom:30px">
+<!-- ══════════ DÉCADAS · placas de archivo con hechos reales ══════════ -->
+<section class="sec" style="padding-bottom:40px">
   <div class="w">
     <div class="sec-t">
       <span class="ojo">El recorrido</span>
-      <h2>Siete décadas de fiesta.</h2>
+      <h2>De <span class="marca">1956</span> a hoy.</h2>
+      <p>Siete décadas de una historia que empezó en Ciudadela y sigue en cada juntada.</p>
     </div>
-    <div class="decadas" id="decadas">
-      <div class="dec"><b>1956</b><span>Nace Chisap: una familia, una receta y un barrio que empezó a festejar distinto.</span></div>
-      <div class="dec"><b>'60s</b><span>El pancho de Chisap se vuelve el clásico de los cumpleaños del barrio.</span></div>
-      <div class="dec"><b>'70s</b><span>Primera fábrica propia: panificados que salen calientes a la calle.</span></div>
-      <div class="dec"><b>'80s</b><span>La segunda generación toma la posta y nacen los combos para juntadas.</span></div>
-      <div class="dec"><b>'90s</b><span>Chisap Fiesta: la marca se viste de rojo y oro y cruza el conurbano.</span></div>
-      <div class="dec"><b>'00s</b><span>Producción propia de aderezos: ocho sabores de la casa.</span></div>
-      <div class="dec"><b>'10s</b><span>La red de sucursales se expande; tercera generación al frente.</span></div>
-      <div class="dec"><b>'20s</b><span>Tienda online, 35 sucursales y una comunidad que no para de crecer.</span></div>
+    <div class="decadas">
+      <div class="dec"><div class="ph" style="background-image:url('img/1956-fabrica.jpg')"></div><div class="tx">
+        <span class="outline anio">1956</span><div class="rr"></div>
+        <p><b>Don Héctor De Sanctis</b> da origen a Chisap en <b>Ciudadela</b>: empieza una historia que continúa hasta hoy.</p></div></div>
+      <div class="dec"><div class="ph" style="background-image:url('img/1965-mardel.jpg')"></div><div class="tx">
+        <span class="outline anio">1965</span><div class="rr"></div>
+        <p><b>Mar del Plata.</b> De los veranos en la costa a las juntadas de siempre: estuvimos ahí, en esos momentos que hoy son recuerdos.</p></div></div>
+      <div class="dec"><div class="ph" style="background-image:url('img/aderezos-retro.jpg')"></div><div class="tx">
+        <span class="outline anio">'80s</span><div class="rr"></div>
+        <p>Los aderezos de la casa ya son un clásico: <b>ketchup y mostaza Chisap</b> en cada mesa del barrio.</p></div></div>
+      <div class="dec"><div class="ph" style="background-image:url('img/cumple-vintage.jpg')"></div><div class="tx">
+        <span class="outline anio">'90s</span><div class="rr"></div>
+        <p>Cambian las épocas, cambian las generaciones, pero hay <b>momentos que nunca dejan de repetirse</b>.</p></div></div>
+      <div class="dec hoy"><div class="ph" style="background-image:url('img/fachada-hoy.jpg')"></div><div class="tx">
+        <span class="outline anio">HOY</span><div class="rr"></div>
+        <p><span class="marca" style="font-size:12px;padding:1px 8px 2px">3 fábricas en 1</span><br>La única fábrica en Sudamérica que hace el pancho completo: <b>viena, pan y aderezos</b>. Renovamos la imagen sin perder la esencia.</p></div></div>
     </div>
-    <p style="text-align:center;font-size:11px;color:var(--tinta3)">Hitos ilustrativos de la demo — el contenido final lo valida Chisap.</p>
+  </div>
+  <div class="fade-rojo" style="height:90px;opacity:.5"></div>
+</section>
+
+<!-- ══════════ MOMENTOS · antes y ahora ══════════ -->
+<section class="sec" style="padding-top:30px;padding-bottom:40px">
+  <div class="w">
+    <div class="sec-t">
+      <span class="ojo">Momentos</span>
+      <h2>Cambió todo. <span class="marca">El sabor, no.</span></h2>
+    </div>
+    <div class="momentos">
+      <div class="mom sep"><img src="img/cumple-vintage.jpg" alt="Cumpleaños familiar de otra época, con torta y productos Chisap"><span class="outline" style="font-size:20px">ANTES</span></div>
+      <div class="mom"><img src="img/cumple-hoy.jpg" alt="Cumpleaños de hoy con productos Chisap en la mesa"><span class="outline" style="font-size:20px">AHORA</span></div>
+    </div>
   </div>
 </section>
 
@@ -134,20 +213,21 @@ textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
     <div class="sec-t">
       <span class="ojo">El mural de los 70 años</span>
       <h2>Las historias que nos trajeron hasta acá.</h2>
-      <p>Cada tarjeta es un recuerdo real de alguien con la marca. Filtrá por década o sumá el tuyo.</p>
+      <p>Cada tarjeta es un recuerdo de alguien con la marca. Filtrá por década o sumá el tuyo.</p>
     </div>
     <div class="filtros-mural" id="filtros"></div>
     <div class="mural" id="muralGrid"></div>
   </div>
+  <div class="fade-rojo" style="height:100px;opacity:.45"></div>
 </section>
 
 <!-- ══════════ FORMULARIO ══════════ -->
-<section class="sec" id="contar" style="background:var(--sup);border-top:1px solid var(--linea);border-bottom:1px solid var(--linea)">
+<section class="sec sec-form" id="contar">
   <div class="w">
-    <div class="sec-t">
+    <div class="sec-t" style="position:relative;z-index:2">
       <span class="ojo">Tu turno</span>
-      <h2>Dejá tu historia en el mural.</h2>
-      <p>¿No sabés por dónde empezar? Tocá una de las ideas y seguila.</p>
+      <h2 style="color:#fff">Dejá tu historia <span class="marca">en el mural</span>.</h2>
+      <p style="color:#E8D9C8">¿No sabés por dónde empezar? Tocá una de las ideas y seguila.</p>
     </div>
 
     <div class="panel" id="panelForm">
@@ -157,7 +237,7 @@ textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
         <button type="button" class="prompt" data-t="El cumpleaños que nunca me voy a olvidar fue ">🎂 Un cumpleaños inolvidable</button>
         <button type="button" class="prompt" data-t="La juntada más épica con Chisap fue ">🌭 La juntada más épica</button>
       </div>
-      <div class="g c2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="fgrid">
         <div class="campo"><label>Nombre y apellido <b>*</b></label><input id="f_nombre" autocomplete="name" placeholder="Ej: Marta Gutiérrez"></div>
         <div class="campo"><label>Década de tu historia</label>
           <select id="f_decada"><option value="">Elegí (opcional)</option><option>'60s</option><option>'70s</option><option>'80s</option><option>'90s</option><option>'00s</option><option>'10s</option><option>'20s</option></select></div>
@@ -180,11 +260,12 @@ textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
       <p><b>Sorteo 70 Años:</b> entre todas las historias recibidas sorteamos <b>70 combos fiesteros</b> y un gran premio aniversario. Una participación por persona. El premio final lo define Chisap — este texto es de la demo.</p>
     </div>
   </div>
+  <div class="fade-rojo"></div>
 </section>
 
 <footer class="pie70">
   <div class="w" style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center">
-    <span><b style="color:#fff">Chisap S.A.</b> · 1956–2026 · 70 años</span>
+    <span><b style="color:#fff">Chisap S.A.</b> · <span style="letter-spacing:.3em">1956–2026</span> · Gracias por ser parte de nuestra historia</span>
     <span>Demo de la acción aniversario · los datos quedan en tu navegador</span>
   </div>
 </footer>
@@ -193,10 +274,11 @@ textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
 "use strict";
 /* ══════ datos ══════
    Historias sembradas (FICTICIAS, para la demo: prueba social del mural).
-   En producción: las entradas van a un endpoint/planilla y pasan por moderación
-   antes de publicarse; el consentimiento queda registrado con fecha y texto. */
+   En producción: las entradas van a un endpoint/planilla, pasan por moderación
+   antes de publicarse y el consentimiento queda registrado con fecha y texto. */
 var SEMBRADAS = [
   { d: "'60s", n: "Osvaldo", de: "Ciudadela", t: "Mi viejo me llevaba de la mano a buscar los panchos para los domingos. El olor del pan calentito en la bolsa de papel es mi infancia entera." },
+  { d: "'60s", n: "Nélida", de: "Mar del Plata", t: "Verano del 65 en la playa: la sombrilla, la reposera y los panchos de Chisap que traía mi tío. Para mí, eso era vacaciones." },
   { d: "'70s", n: "Marta", de: "Ramos Mejía", t: "Para mi comunión, la abuela encargó todo en Chisap. Llovió, se cortó la luz, y igual fue la mejor fiesta del barrio: a la luz de las velas, con panchos para cuarenta." },
   { d: "'80s", n: "Rubén", de: "San Justo", t: "Mi primer trabajo fue repartiendo pedidos de Chisap en bicicleta. Treinta años después volví a la misma sucursal… a encargar el cumpleaños de quince de mi hija." },
   { d: "'80s", n: "Graciela", de: "Monte Grande", t: "En casa éramos seis hermanos. Mamá decía: 'cumpleaños sin Chisap no es cumpleaños'. Lo sigo diciendo yo, palabra por palabra." },
@@ -205,7 +287,7 @@ var SEMBRADAS = [
   { d: "'00s", n: "Diego", de: "Castelar", t: "Cuando nació mi primer hijo salimos del sanatorio y lo primero que hicimos fue parar en Chisap. Cansancio, felicidad y un pancho con todo. Ritual cumplido." },
   { d: "'10s", n: "Antonela", de: "Mar del Plata", t: "Me mudé a Mardel y extrañaba los cumpleaños de Buenos Aires. El día que abrió la sucursal acá, le mandé la foto a todo el grupo familiar. Fue un acontecimiento." },
   { d: "'20s", n: "Brisa", de: "Caseros", t: "En pandemia festejamos el cumple de la abuela por videollamada, cada casa con su combo de Chisap. Estábamos lejos y éramos la misma mesa." },
-  { d: "'20s", n: "Tobías", de: "Devoto", t: "Pedí por la tienda online para la juntada de egresados. Somos la tercera generación que festeja con lo mismo, y ahora llega con un clic." }
+  { d: "'20s", n: "Tobías", de: "Devoto", t: "Pedí por la tienda online para la juntada de egresados. Somos otra generación más festejando con lo mismo, y ahora llega con un clic." }
 ];
 var LS = "chisap_70_historias";
 
@@ -222,12 +304,17 @@ function card(h, propia){
     '<div class="quien"><div class="ava">' + esc(ini) + '</div><div><b>' + esc(h.n) + (propia ? "" : " (ejemplo)") + "</b>" +
     '<small>' + esc(h.de || "") + (propia ? " · recién enviada" : " · historia de la demo") + "</small></div></div></article>";
 }
+var CARD_ARCHIVO = '<article class="historia archivo"><span class="dec-tag">ARCHIVO</span>' +
+  '<img src="img/tarjeta-1956.jpg" alt="Tarjeta original de pedidos de Chisap, Ciudadela, años 50">' +
+  '<small>La tarjeta de pedidos original de Ciudadela: «los gratos momentos son los más simples… con panchos».</small></article>';
 function pintarMural(){
   var todas = SEMBRADAS.map(function (h) { return { h: h, p: false }; })
     .concat(propias().map(function (h) { return { h: h, p: true }; }));
   var vis = todas.filter(function (x) { return filtroAct === "todas" || x.h.d === filtroAct; });
-  document.getElementById("muralGrid").innerHTML = vis.length
-    ? vis.map(function (x) { return card(x.h, x.p); }).join("")
+  var html = vis.map(function (x) { return card(x.h, x.p); });
+  if (filtroAct === "todas" || filtroAct === "'60s") html.splice(Math.min(2, html.length), 0, CARD_ARCHIVO);
+  document.getElementById("muralGrid").innerHTML = html.length
+    ? html.join("")
     : '<p style="color:var(--tinta3);text-align:center;column-span:all">Todavía no hay historias de esa década — la tuya puede ser la primera.</p>';
 }
 function pintarFiltros(){
@@ -271,12 +358,12 @@ document.getElementById("btnEnviar").addEventListener("click", function () {
 
   document.getElementById("panelForm").innerHTML =
     '<div class="gracias"><div class="tick">🎉</div>' +
-    '<h3 style="font-family:var(--disp);font-weight:900;font-size:24px;margin:10px 0">¡Gracias, ' + esc(h.n) + "!</h3>" +
-    '<p style="color:var(--tinta3);font-size:14px;max-width:440px;margin:0 auto">Tu historia quedó <b style="color:var(--oro)">en revisión</b> (ya la podés ver marcada en el mural). Si el equipo la aprueba, se publica en menos de 48 h. Y ya estás participando del <b style="color:var(--oro)">Sorteo 70 Años</b> — te avisamos por email o WhatsApp.</p>' +
+    '<h3 style="font-family:var(--disp);font-weight:900;font-size:24px;margin:10px 0;color:#fff">¡Gracias, ' + esc(h.n) + ', <span class="marca" style="font-size:19px">por ser parte de nuestra historia</span>!</h3>' +
+    '<p style="color:#E8D9C8;font-size:14px;max-width:440px;margin:0 auto">Tu historia quedó <b style="color:var(--oro)">en revisión</b> (ya la podés ver marcada en el mural). Si el equipo la aprueba, se publica en menos de 48 h. Y ya estás participando del <b style="color:var(--oro)">Sorteo 70 Años</b> — te avisamos por email o WhatsApp.</p>' +
     '<a class="btn btn-ghost" style="margin-top:20px" href="#mural">Ver mi historia en el mural ↑</a></div>';
   filtroAct = "todas"; pintarFiltros(); pintarMural();
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    var cols = ["#F2B705", "#E2231A", "#25D366", "#FFD54A", "#7B95FF"];
+    var cols = ["#F2B705", "#E2231A", "#FFFFFF", "#FFD54A", "#C31C0F"];
     for (var i = 0; i < 70; i++) { var c = document.createElement("div"); c.className = "confetti";
       c.style.left = Math.random() * 100 + "vw"; c.style.background = cols[i % cols.length];
       c.style.animationDelay = Math.random() * .8 + "s"; document.body.appendChild(c);
