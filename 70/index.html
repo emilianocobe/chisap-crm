@@ -35,13 +35,7 @@
   background:#1a0d08 url('img/hero-panchos.jpg') center 35%/cover no-repeat}
 .hero:before{content:'';position:absolute;inset:0;background:radial-gradient(900px 600px at 50% 30%,rgba(20,8,4,.25),rgba(20,8,4,.78) 85%)}
 .hero>.w{position:relative;z-index:2}
-.lockup{position:relative;display:inline-block;margin:6px 0 2px;filter:drop-shadow(0 6px 30px rgba(0,0,0,.45))}
-.lockup .n70{font-family:var(--disp);font-weight:900;font-size:clamp(130px,25vw,230px);line-height:.88;color:#fff;letter-spacing:-.04em}
-.lockup .cero{position:relative;display:inline-block;color:transparent;-webkit-text-stroke:5px #fff}
-.lockup .oval{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
-  width:60%;filter:drop-shadow(0 2px 10px rgba(0,0,0,.35))}
-.lockup .anios-script{position:absolute;right:-8px;bottom:-14px;font-family:'Segoe Script','Brush Script MT',cursive;
-  font-size:clamp(20px,4vw,32px);color:#fff;transform:rotate(-6deg)}
+.logo70{width:clamp(250px,46vw,420px);margin:10px auto 2px;display:block;filter:drop-shadow(0 8px 34px rgba(0,0,0,.55))}
 .hero h1{font-size:clamp(25px,4.4vw,44px);font-weight:900;margin:22px 0 10px;letter-spacing:-.02em;text-shadow:0 2px 18px rgba(0,0,0,.5)}
 .hero .tag{font-size:clamp(15px,2.2vw,19px);font-weight:600;color:#FFE9D6;text-shadow:0 1px 10px rgba(0,0,0,.6)}
 .hero .sub{color:#F4DFCE;font-size:clamp(14px,1.9vw,16.5px);max-width:620px;margin:14px auto 0;text-shadow:0 1px 8px rgba(0,0,0,.6)}
@@ -59,8 +53,7 @@
 .dec{flex:0 0 272px;scroll-snap-align:start;position:relative;border-radius:18px;overflow:hidden;
   border:1px solid var(--linea);min-height:360px;display:flex;align-items:flex-end;transition:var(--t);background:#201510}
 .dec:hover{transform:translateY(-4px)}
-.dec .ph{position:absolute;inset:0;background-size:cover;background-position:center;filter:sepia(.25) saturate(.9)}
-.dec.hoy .ph{filter:none}
+.dec .ph{position:absolute;inset:0;background-size:cover;background-position:center}
 .dec:after{content:'';position:absolute;inset:0;background:linear-gradient(185deg,rgba(15,8,5,.18) 30%,rgba(15,8,5,.86) 78%)}
 .dec .tx{position:relative;z-index:2;padding:18px}
 .dec .anio{font-size:34px;display:block;-webkit-text-stroke-width:2px}
@@ -101,7 +94,6 @@
 @media(max-width:680px){.momentos{grid-template-columns:1fr}}
 .mom{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--linea);aspect-ratio:5/4}
 .mom img{width:100%;height:100%;object-fit:cover;display:block}
-.mom.sep img{filter:sepia(.3) saturate(.85)}
 .mom span{position:absolute;left:14px;bottom:12px;z-index:2}
 .mom:after{content:'';position:absolute;inset:0;background:linear-gradient(190deg,transparent 55%,rgba(15,8,5,.7))}
 .mom span{font-family:var(--disp);font-weight:900;font-size:22px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6)}
@@ -147,10 +139,7 @@ textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
 <header class="hero">
   <div class="w">
     <div class="kicker">Cumplimos <span class="marca">70 años</span> de historia</div>
-    <div class="lockup">
-      <span class="n70">7<span class="cero">0<img class="oval" src="../assets/logo.png" alt="Chisap"></span></span>
-      <span class="anios-script">Años</span>
-    </div>
+    <img class="logo70" src="img/logo-70.png" alt="Chisap · 70 años">
     <div class="fechas">1956&nbsp;–&nbsp;2026</div>
     <h1>Setenta años de juntadas.<br>Una sola historia: <em style="font-style:normal;color:var(--oro-claro)">la tuya.</em></h1>
     <p class="tag">Distintas épocas, mismo sabor de siempre.</p>
@@ -201,7 +190,7 @@ textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
       <h2>Cambió todo. <span class="marca">El sabor, no.</span></h2>
     </div>
     <div class="momentos">
-      <div class="mom sep"><img src="img/cumple-vintage.jpg" alt="Cumpleaños familiar de otra época, con torta y productos Chisap"><span class="outline" style="font-size:20px">ANTES</span></div>
+      <div class="mom"><img src="img/cumple-vintage.jpg" alt="Cumpleaños familiar de otra época, con torta y productos Chisap"><span class="outline" style="font-size:20px">ANTES</span></div>
       <div class="mom"><img src="img/cumple-hoy.jpg" alt="Cumpleaños de hoy con productos Chisap en la mesa"><span class="outline" style="font-size:20px">AHORA</span></div>
     </div>
   </div>
@@ -266,7 +255,7 @@ textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.55}
 <footer class="pie70">
   <div class="w" style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center">
     <span><b style="color:#fff">Chisap S.A.</b> · <span style="letter-spacing:.3em">1956–2026</span> · Gracias por ser parte de nuestra historia</span>
-    <span>Demo de la acción aniversario · los datos quedan en tu navegador</span>
+    <span>Demo de la acción aniversario · los datos quedan en tu navegador · <a href="panel.html" style="color:#C9B29B">panel interno</a></span>
   </div>
 </footer>
 
@@ -297,19 +286,21 @@ function propias(){ try { return JSON.parse(localStorage.getItem(LS) || "[]"); }
 function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 function card(h, propia){
   var ini = (h.n || "?").trim().charAt(0).toUpperCase();
-  return '<article class="historia' + (propia ? " revision" : "") + '">' +
-    (propia ? '<span class="rev-tag">EN REVISIÓN · solo la ves vos</span>' : "") +
+  var pendiente = propia && h.estado !== "aprobada";
+  return '<article class="historia' + (pendiente ? " revision" : "") + '">' +
+    (pendiente ? '<span class="rev-tag">EN REVISIÓN · solo la ves vos</span>' : "") +
     (h.d ? '<span class="dec-tag">' + esc(h.d) + "</span>" : "") +
     '<span class="comillas">“</span><p>' + esc(h.t) + "</p>" +
     '<div class="quien"><div class="ava">' + esc(ini) + '</div><div><b>' + esc(h.n) + (propia ? "" : " (ejemplo)") + "</b>" +
-    '<small>' + esc(h.de || "") + (propia ? " · recién enviada" : " · historia de la demo") + "</small></div></div></article>";
+    '<small>' + esc(h.de || "") + (propia ? (pendiente ? " · recién enviada" : " · publicada en el mural") : " · historia de la demo") + "</small></div></div></article>";
 }
 var CARD_ARCHIVO = '<article class="historia archivo"><span class="dec-tag">ARCHIVO</span>' +
   '<img src="img/tarjeta-1956.jpg" alt="Tarjeta original de pedidos de Chisap, Ciudadela, años 50">' +
   '<small>La tarjeta de pedidos original de Ciudadela: «los gratos momentos son los más simples… con panchos».</small></article>';
 function pintarMural(){
   var todas = SEMBRADAS.map(function (h) { return { h: h, p: false }; })
-    .concat(propias().map(function (h) { return { h: h, p: true }; }));
+    .concat(propias().filter(function (h) { return h.estado !== "rechazada"; })
+      .map(function (h) { return { h: h, p: true }; }));
   var vis = todas.filter(function (x) { return filtroAct === "todas" || x.h.d === filtroAct; });
   var html = vis.map(function (x) { return card(x.h, x.p); });
   if (filtroAct === "todas" || filtroAct === "'60s") html.splice(Math.min(2, html.length), 0, CARD_ARCHIVO);
@@ -351,8 +342,12 @@ document.getElementById("btnEnviar").addEventListener("click", function () {
   if (err) { errBox.textContent = err; errBox.style.display = "block"; return; }
   errBox.style.display = "none";
 
-  var h = { n: nombre.value.trim().split(" ")[0], de: "", d: document.getElementById("f_decada").value, t: ta.value.trim(),
-            enviado: new Date().toISOString(), consentimiento: true };
+  var nombreCompleto = nombre.value.trim();
+  var h = { id: "h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+            n: nombreCompleto.split(" ")[0], nombre: nombreCompleto,
+            email: email.value.trim(), tel: tel.value.trim(),
+            de: "", d: document.getElementById("f_decada").value, t: ta.value.trim(),
+            enviado: new Date().toISOString(), consentimiento: true, estado: "pendiente" };
   try { var arr = propias(); arr.unshift(h); localStorage.setItem(LS, JSON.stringify(arr)); } catch (e) {}
   /* producción: acá va el POST al endpoint (nombre, email, tel, historia, consentimiento con fecha) */
 

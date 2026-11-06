@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panel · Acción 70 años — Chisap</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/logo.png">
+<link rel="stylesheet" href="../assets/brand.css">
+<style>
+/* ══════ Panel interno de la acción 70 años ══════ */
+.w{max-width:1140px;margin:0 auto;padding:0 24px}
+.top{display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid var(--linea);flex-wrap:wrap}
+.top img{width:84px}
+.top h1{font-size:21px;font-weight:900}
+.top small{color:var(--tinta3);display:block;font-size:12px}
+.top .acciones{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+.btn-mini{background:var(--sup);border:1px solid var(--linea);color:var(--tinta2);font-family:inherit;font-weight:700;
+  font-size:12.5px;padding:9px 16px;border-radius:10px;cursor:pointer;transition:var(--t);text-decoration:none;display:inline-block}
+.btn-mini:hover{border-color:rgba(242,183,5,.5);color:#fff}
+.btn-mini.oro{background:var(--oro);color:#8A1206;border-color:var(--oro)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:22px 0}
+.kpi{background:var(--sup);border:1px solid var(--linea);border-radius:14px;padding:16px}
+.kpi b{font-family:var(--disp);font-weight:900;font-size:30px;display:block;line-height:1}
+.kpi span{font-size:11.5px;color:var(--tinta3);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.kpi.pend b{color:var(--oro)}
+.kpi.apro b{color:#7FD88A}
+.kpi.rech b{color:var(--rojo-luz)}
+
+.decbar{display:flex;gap:6px;align-items:flex-end;height:64px;margin:4px 0 2px}
+.decbar div{flex:1;background:linear-gradient(180deg,var(--oro),var(--oro-osc));border-radius:4px 4px 0 0;min-height:3px;position:relative}
+.decbar div i{position:absolute;top:-16px;left:0;right:0;text-align:center;font-style:normal;font-size:10px;color:var(--tinta2);font-weight:700}
+.decbar div u{position:absolute;bottom:-16px;left:0;right:0;text-align:center;text-decoration:none;font-size:9.5px;color:var(--tinta3)}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0 14px}
+.tab{background:var(--sup);border:1px solid var(--linea);color:var(--tinta2);font-family:inherit;font-weight:700;
+  font-size:12.5px;padding:8px 16px;border-radius:99px;cursor:pointer;transition:var(--t)}
+.tab.act{background:var(--oro);color:#8A1206;border-color:var(--oro)}
+
+.fila{background:var(--sup);border:1px solid var(--linea);border-radius:14px;padding:16px 18px;margin-bottom:12px;
+  display:grid;grid-template-columns:1fr auto;gap:12px;transition:var(--t)}
+.fila.estado-aprobada{border-left:4px solid #7FD88A}
+.fila.estado-pendiente{border-left:4px solid var(--oro)}
+.fila.estado-rechazada{border-left:4px solid var(--rojo-vivo);opacity:.65}
+.fila .quien{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.fila .quien b{font-size:14.5px}
+.fila .quien .pill{font-family:var(--disp);font-weight:800;font-size:10px;letter-spacing:.06em;padding:3px 10px;border-radius:99px;text-transform:uppercase}
+.pill.pendiente{background:rgba(242,183,5,.18);color:var(--oro-claro)}
+.pill.aprobada{background:rgba(127,216,138,.15);color:#7FD88A}
+.pill.rechazada{background:rgba(226,35,26,.18);color:var(--rojo-luz)}
+.fila .contacto{font-size:12px;color:var(--tinta3);margin-top:3px}
+.fila .contacto a{color:var(--oro-claro)}
+.fila .texto{font-size:13.5px;color:var(--tinta2);margin-top:9px;line-height:1.6;border-left:2px solid var(--linea);padding-left:12px}
+.fila .ops{display:flex;flex-direction:column;gap:7px;justify-content:center}
+.op{background:transparent;border:1px solid var(--linea);color:var(--tinta2);font-family:inherit;font-weight:700;
+  font-size:11.5px;padding:7px 14px;border-radius:9px;cursor:pointer;transition:var(--t);white-space:nowrap}
+.op:hover{color:#fff;border-color:var(--tinta3)}
+.op.ok:hover{border-color:#7FD88A;color:#7FD88A}
+.op.no:hover{border-color:var(--rojo-vivo);color:var(--rojo-luz)}
+@media(max-width:640px){.fila{grid-template-columns:1fr}.fila .ops{flex-direction:row;flex-wrap:wrap}}
+
+.vacio{text-align:center;color:var(--tinta3);padding:50px 20px;border:1px dashed var(--linea);border-radius:14px;font-size:13.5px}
+.ganador{background:linear-gradient(140deg,rgba(242,183,5,.15),rgba(226,35,26,.1));border:1px solid rgba(242,183,5,.5);
+  border-radius:16px;padding:20px;margin:14px 0;display:none}
+.ganador b{color:var(--oro-claro)}
+.nota{font-size:11.5px;color:var(--tinta3);margin:30px 0 40px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<header class="top w">
+  <img src="img/logo-70.png" alt="Chisap 70 años">
+  <div>
+    <h1>Panel · Acción 70 años</h1>
+    <small>Moderación de historias, registros del sorteo y exportación</small>
+  </div>
+  <div class="acciones">
+    <button class="btn-mini" id="btnDemo">＋ Generar envíos de prueba</button>
+    <button class="btn-mini" id="btnSorteo">🎁 Sortear ganador</button>
+    <button class="btn-mini oro" id="btnCsv">⬇ Exportar CSV</button>
+    <a class="btn-mini" href="index.html">Ver landing →</a>
+  </div>
+</header>
+
+<main class="w">
+  <div class="kpis" id="kpis"></div>
+
+  <div class="ganador" id="ganador"></div>
+
+  <div class="tabs" id="tabs"></div>
+  <div id="lista"></div>
+
+  <p class="nota"><b>Cómo funciona esta demo:</b> los envíos de la landing quedan en el almacenamiento de este navegador
+  (mismo dispositivo = mismos datos que ve la landing). Al aprobar una historia, pasa a verse publicada en el mural;
+  al rechazarla, desaparece de él. En producción, los envíos llegan a un endpoint/planilla con el consentimiento
+  fechado, y este panel opera sobre esa base.</p>
+</main>
+
+<script>
+"use strict";
+var LS = "chisap_70_historias";
+var filtro = "todas";
+
+function leer(){ try { return JSON.parse(localStorage.getItem(LS) || "[]"); } catch (e) { return []; } }
+function guardar(a){ localStorage.setItem(LS, JSON.stringify(a)); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function estadoDe(h){ return h.estado || "pendiente"; }
+function fecha(iso){
+  if (!iso) return "—";
+  var d = new Date(iso);
+  return d.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "2-digit" }) + " " +
+         d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+}
+
+/* ── KPIs + barras por década ── */
+function pintarKpis(){
+  var a = leer();
+  var pend = a.filter(function (h) { return estadoDe(h) === "pendiente"; }).length;
+  var apro = a.filter(function (h) { return estadoDe(h) === "aprobada"; }).length;
+  var rech = a.filter(function (h) { return estadoDe(h) === "rechazada"; }).length;
+  var decs = ["'60s", "'70s", "'80s", "'90s", "'00s", "'10s", "'20s"];
+  var max = 1, cuentas = decs.map(function (d) {
+    var n = a.filter(function (h) { return h.d === d; }).length;
+    if (n > max) max = n; return n;
+  });
+  document.getElementById("kpis").innerHTML =
+    '<div class="kpi"><b>' + a.length + '</b><span>Recibidas</span></div>' +
+    '<div class="kpi pend"><b>' + pend + '</b><span>Pendientes</span></div>' +
+    '<div class="kpi apro"><b>' + apro + '</b><span>Publicadas</span></div>' +
+    '<div class="kpi rech"><b>' + rech + '</b><span>Rechazadas</span></div>' +
+    '<div class="kpi"><b>' + (a.length - rech) + '</b><span>En el sorteo</span></div>' +
+    '<div class="kpi"><span>Por década</span><div class="decbar">' +
+      decs.map(function (d, i) {
+        return '<div style="height:' + Math.round(cuentas[i] / max * 100) + '%"><i>' + (cuentas[i] || "") + "</i><u>" + d + "</u></div>";
+      }).join("") + "</div></div>";
+}
+
+/* ── listado ── */
+function pintarTabs(){
+  var defs = [["todas", "Todas"], ["pendiente", "Pendientes"], ["aprobada", "Publicadas"], ["rechazada", "Rechazadas"]];
+  document.getElementById("tabs").innerHTML = defs.map(function (d) {
+    return '<button class="tab' + (filtro === d[0] ? " act" : "") + '" data-f="' + d[0] + '">' + d[1] + "</button>";
+  }).join("");
+}
+function pintarLista(){
+  var a = leer().slice().sort(function (x, y) { return (y.enviado || "").localeCompare(x.enviado || ""); });
+  var vis = a.filter(function (h) { return filtro === "todas" || estadoDe(h) === filtro; });
+  if (!vis.length) {
+    document.getElementById("lista").innerHTML =
+      '<div class="vacio">No hay envíos ' + (filtro === "todas" ? "todavía. Cuando alguien complete el formulario de la landing (en este navegador), aparece acá. También podés <b>generar envíos de prueba</b> desde el botón de arriba." : "en este estado.") + "</div>";
+    return;
+  }
+  document.getElementById("lista").innerHTML = vis.map(function (h) {
+    var e = estadoDe(h);
+    return '<article class="fila estado-' + e + '" data-id="' + esc(h.id || "") + '">' +
+      '<div><div class="quien"><b>' + esc(h.nombre || h.n) + '</b>' +
+      '<span class="pill ' + e + '">' + e + "</span>" +
+      (h.d ? '<span class="pill" style="background:var(--fondo);color:var(--tinta3)">' + esc(h.d) + "</span>" : "") +
+      '<span style="font-size:11px;color:var(--tinta3)">' + fecha(h.enviado) + "</span></div>" +
+      '<div class="contacto">✉ <a href="mailto:' + esc(h.email || "") + '">' + esc(h.email || "sin email") + "</a> · ☎ " + esc(h.tel || "—") +
+      " · consentimiento: " + (h.consentimiento ? "sí (" + fecha(h.enviado) + ")" : "NO") + "</div>" +
+      '<p class="texto">' + esc(h.t) + "</p></div>" +
+      '<div class="ops">' +
+      (e !== "aprobada" ? '<button class="op ok" data-op="aprobada">✓ Publicar</button>' : "") +
+      (e !== "rechazada" ? '<button class="op no" data-op="rechazada">✕ Rechazar</button>' : "") +
+      (e !== "pendiente" ? '<button class="op" data-op="pendiente">↩ A pendiente</button>' : "") +
+      '<button class="op no" data-op="borrar">🗑 Eliminar</button>' +
+      "</div></article>";
+  }).join("");
+}
+function refrescar(){ pintarKpis(); pintarTabs(); pintarLista(); }
+
+document.getElementById("tabs").addEventListener("click", function (e) {
+  var b = e.target.closest(".tab"); if (!b) return;
+  filtro = b.dataset.f; refrescar();
+});
+document.getElementById("lista").addEventListener("click", function (e) {
+  var b = e.target.closest(".op"); if (!b) return;
+  var id = b.closest(".fila").dataset.id;
+  var a = leer();
+  var i = a.findIndex(function (h) { return h.id === id; });
+  if (i < 0) return;
+  if (b.dataset.op === "borrar") {
+    if (!confirm("¿Eliminar definitivamente el envío de " + (a[i].nombre || a[i].n) + "? (en producción: baja lógica)")) return;
+    a.splice(i, 1);
+  } else {
+    a[i].estado = b.dataset.op;
+    a[i].moderado = new Date().toISOString();
+  }
+  guardar(a); refrescar();
+});
+
+/* ── exportar CSV ── */
+document.getElementById("btnCsv").addEventListener("click", function () {
+  var a = leer();
+  if (!a.length) { alert("No hay envíos para exportar."); return; }
+  var cab = ["id", "fecha_envio", "nombre", "email", "telefono", "decada", "historia", "consentimiento", "estado", "fecha_moderacion"];
+  var filas = a.map(function (h) {
+    return [h.id, h.enviado, h.nombre || h.n, h.email, h.tel, h.d, (h.t || "").replace(/\r?\n/g, " "),
+            h.consentimiento ? "si" : "no", estadoDe(h), h.moderado || ""]
+      .map(function (v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; }).join(";");
+  });
+  var csv = "﻿" + cab.join(";") + "\r\n" + filas.join("\r\n");
+  var url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  var l = document.createElement("a");
+  l.href = url; l.download = "chisap-70-historias-" + new Date().toISOString().slice(0, 10) + ".csv";
+  document.body.appendChild(l); l.click(); l.remove();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+});
+
+/* ── sorteo ── */
+document.getElementById("btnSorteo").addEventListener("click", function () {
+  var cand = leer().filter(function (h) { return estadoDe(h) !== "rechazada" && h.consentimiento; });
+  var g = document.getElementById("ganador");
+  if (!cand.length) { g.style.display = "block"; g.innerHTML = "No hay participantes válidos para sortear (los rechazados no participan)."; return; }
+  var w = cand[Math.floor(Math.random() * cand.length)];
+  g.style.display = "block";
+  g.innerHTML = "🎉 <b>Ganador del sorteo:</b> " + esc(w.nombre || w.n) +
+    " · " + esc(w.email || "") + " · " + esc(w.tel || "") +
+    ' <span style="color:var(--tinta3);font-size:11.5px">(elegido al azar entre ' + cand.length +
+    " participantes con consentimiento; en producción el sorteo se documenta según bases y condiciones)</span>";
+});
+
+/* ── envíos de prueba ── */
+var DEMO = [
+  { nombre: "Valeria Núñez", email: "valeria.n@example.com", tel: "11 5555 0201", d: "'90s", t: "Mis quince los festejamos en el club con mesa de panchos Chisap para ochenta personas. Mi papá todavía guarda la factura de ese día en una caja de recuerdos." },
+  { nombre: "Jorge Palacios", email: "jpalacios@example.com", tel: "11 5555 0202", d: "'70s", t: "Trabajé veinte años frente a la fábrica de Ciudadela. El olor a pan recién hecho de la mañana era el despertador del barrio entero." },
+  { nombre: "Camila Ferreyra", email: "cami.f@example.com", tel: "221 555 0203", d: "'20s", t: "Para el cumple de mi hijo en plena mudanza no llegaba con nada: pedí los combos por la web y me salvaron la fiesta. Ahora es tradición." },
+  { nombre: "Ricardo Sosa", email: "rsosa@example.com", tel: "11 5555 0204", d: "'80s", t: "En los asados del sindicato siempre había una tanda de superpanchos Chisap para los chicos. Hoy los chicos somos los que organizamos, y seguimos pidiendo lo mismo." },
+  { nombre: "Mónica Ledesma", email: "monica.l@example.com", tel: "223 555 0205", d: "'60s", t: "Mi mamá me contaba que el carrito de panchos de la rambla era el paseo obligado del verano del 65. Cuando volvimos a Mar del Plata, lo primero que buscamos fue un Chisap." }
+];
+document.getElementById("btnDemo").addEventListener("click", function () {
+  var a = leer();
+  var ahora = Date.now();
+  DEMO.forEach(function (d, i) {
+    a.unshift({ id: "demo" + ahora.toString(36) + i, n: d.nombre.split(" ")[0], nombre: d.nombre,
+      email: d.email, tel: d.tel, de: "", d: d.d, t: d.t,
+      enviado: new Date(ahora - i * 86400000 * 1.3).toISOString(), consentimiento: true, estado: "pendiente" });
+  });
+  guardar(a); refrescar();
+});
+
+refrescar();
+</script>
+</body>
+</html>
